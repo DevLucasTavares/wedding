@@ -1,0 +1,37 @@
+<main class="container">
+  <button class="add-button" ng-click="abrirModal()">+</button>
+
+    <div class="card" ng-repeat="item in itens">
+        <div class="image-mock"></div>
+
+        <div class="card-content">
+            <h2 class="nome">{{item.nome}}</h2>
+            <p class="descricao">{{item.descricao}}</p>
+            
+            <span class="valor">R$ {{item.valor | number:2}}</span>
+
+            <div class="card-interactions">
+            <a class="btn-escolher" ng-href="{{item.link_compra}}" target="_blank">
+                Escolher Item
+            </a>
+            <button class="delete-btn" ng-click="removerItem(item.id)">
+                <i data-lucide="trash-2"></i>
+            </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="overlay" ng-show="modalAberto" ng-click="fecharModal()"></div>
+
+<div class="modal" ng-show="modalAberto">
+  <button class="close" ng-click="fecharModal()">
+    <i data-lucide="x"></i>
+  </button>
+  <h3>Novo Presente ☁️</h3>
+  <input type="text" placeholder="O que é?" ng-model="novo.nome">
+  <textarea placeholder="Algum detalhe?" ng-model="novo.descricao"></textarea>
+  <input type="number" placeholder="Valor" ng-model="novo.valor">
+  <input type="text" placeholder="Link" ng-model="novo.link_compra">
+  <button class="submit" ng-click="adicionarItem()">Adicionar 🤍</button>
+</div>
