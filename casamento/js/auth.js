@@ -1,3 +1,7 @@
+const REDIRECT_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? window.location.origin
+    : 'https://lucascarrarini.com/casamento/';
+
 window.alternarAba = (aba) => {
     const formLogin = document.getElementById('form-login');
     const formRegistro = document.getElementById('form-registro');
@@ -33,10 +37,11 @@ window.registrarManual = async () => {
 
     if (temErro) return;
 
-    const { error } = await supabase.auth.signUp({
+    const { error } = await _supabase.auth.signUp({
         email: email,
         password: senha,
         options: { 
+            emailRedirectTo: REDIRECT_URL,
             data: { 
                 full_name: nome,
                 phone: telefone 
@@ -56,7 +61,7 @@ window.loginManual = async () => {
     const email = document.getElementById('login-email').value;
     const senha = document.getElementById('login-senha').value;
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error } = await _supabase.auth.signInWithPassword({
         email: email,
         password: senha
     });
@@ -65,8 +70,10 @@ window.loginManual = async () => {
 };
 
 window.loginGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
+    await _supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin }
+        options: { 
+            redirectTo: REDIRECT_URL
+        }
     });
 };
