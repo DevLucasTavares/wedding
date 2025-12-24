@@ -1,92 +1,30 @@
 :root {
-  --primaria: #B3E5FC; /* Azul Cinnamoroll */
-  --secundaria: #E1F5FE; /* Azul bem clarinho */
-  --acentuacao: #FFB7C5; /* Rosa bochecha */
-  --detalhe: #FFF9C4; /* Amarelo laço */
-  --contraste: #546E7A; /* Cinza azulado para texto */
+  --primaria: #B3E5FC;
+  --secundaria: #E1F5FE;
+  --acentuacao: #FFB7C5;
+  --detalhe: #FFF9C4;
+  --contraste: #546E7A;
   --branco: #FFFFFF;
-  
   --bg: var(--secundaria);
   --text: var(--contraste);
-  --border: var(--primaria);
-  --card-bg: var(--branco);
 }
 
-* { box-sizing: border-box; }
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+}
 
 body {
-  margin: 0;
   font-family: sans-serif;
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden;
 }
 
 .container {
-  padding: 16px;
+  width: 100%;
   max-width: 480px;
   margin: 0 auto;
-}
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  backdrop-filter: blur(4px);
-  background: rgba(179, 229, 252, 0.3);
-  z-index: 10;
-}
-
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--branco);
-  border-radius: 25px;
-  padding: 24px;
-  width: 90%;
-  max-width: 380px;
-  border: 4px solid var(--primaria);
-  z-index: 11;
-}
-
-.modal input, .modal textarea {
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  border: 2px solid var(--secundaria);
-  background: var(--branco);
-}
-
-.submit {
-  width: 100%;
-  background: var(--primaria);
-  border: none;
-  padding: 14px;
-  border-radius: 20px;
-  font-weight: 700;
-  color: var(--contraste);
-  cursor: pointer;
-}
-
-.close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: var(--secundaria);
-  border: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  color: var(--contraste);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.close:hover {
-  background: var(--acentuacao);
-  color: var(--branco);
+  padding: 0;
 }

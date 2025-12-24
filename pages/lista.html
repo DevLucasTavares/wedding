@@ -1,37 +1,49 @@
 <main class="container">
-  <button class="add-button" ng-click="abrirModal()">+</button>
+    <div id="admin-actions"></div>
 
-    <div class="card" ng-repeat="item in itens">
-        <div class="image-mock"></div>
-
-        <div class="card-content">
-            <h2 class="nome">{{item.nome}}</h2>
-            <p class="descricao">{{item.descricao}}</p>
-            
-            <span class="valor">R$ {{item.valor | number:2}}</span>
-
-            <div class="card-interactions">
-            <a class="btn-escolher" ng-href="{{item.link_compra}}" target="_blank">
-                Escolher Item
-            </a>
-            <button class="delete-btn" ng-click="removerItem(item.id)">
-                <i data-lucide="trash-2"></i>
-            </button>
-            </div>
+    <div class="grid-itens" id="lista-itens">
         </div>
-    </div>
 </main>
 
-<div class="overlay" ng-show="modalAberto" ng-click="fecharModal()"></div>
+<div class="overlay" id="modal-overlay" style="display: none;"></div>
 
-<div class="modal" ng-show="modalAberto">
-  <button class="close" ng-click="fecharModal()">
-    <i data-lucide="x"></i>
-  </button>
-  <h3>Novo Presente ☁️</h3>
-  <input type="text" placeholder="O que é?" ng-model="novo.nome">
-  <textarea placeholder="Algum detalhe?" ng-model="novo.descricao"></textarea>
-  <input type="number" placeholder="Valor" ng-model="novo.valor">
-  <input type="text" placeholder="Link" ng-model="novo.link_compra">
-  <button class="submit" ng-click="adicionarItem()">Adicionar 🤍</button>
+<div class="modal" id="modal-novo-presente" style="display: none;">
+    <button class="close" onclick="fecharTodosModais()"><i data-lucide="x"></i></button>
+    <h3>Novo Presente</h3>
+    
+    <input type="text" id="novo-item-nome" placeholder="O que é?">
+    
+    <select id="novo-item-area" class="modal-select">
+        <option value="" disabled selected>Selecione a área</option>
+        <option value="1">Banheiro</option>
+        <option value="2">Cozinha</option>
+        <option value="3">Eletrodomésticos</option>
+        <option value="4">Quarto</option>
+        <option value="5">Área de Serviço</option>
+        <option value="6">Outros</option>
+    </select>
+
+    <textarea id="novo-item-descricao" placeholder="Algum detalhe?"></textarea>
+    <input type="number" id="novo-item-valor" placeholder="Valor (R$)">
+    <input type="text" id="novo-item-link" placeholder="Link de compra">
+    
+    <button class="submit" onclick="adicionarItem()">Adicionar</button>
+</div>
+
+<div class="modal modal-aviso" id="modal-aviso-login" style="display: none;">
+    <button class="close" onclick="fecharModal('modal-aviso-login')"><i data-lucide="x"></i></button>
+    <h3>Opa! Quase lá... ☁️</h3>
+    <p style="color: var(--contraste); margin-bottom: 20px;">
+        Para escolher um presente, você precisa criar uma conta. É rapidinho!
+    </p>
+    <button class="submit" onclick="navegar('login')">Fazer Login / Registrar</button>
+</div>
+
+<div class="modal modal-aviso" id="modal-confirmacao" style="display: none;">
+    <button class="close" onclick="fecharModal('modal-confirmacao')"><i data-lucide="x"></i></button>
+    <h3 id="confirma-titulo">Atenção 💗</h3>
+    <p id="confirma-mensagem" style="color: var(--contraste); margin-bottom: 20px;">
+        Mensagem de confirmação.
+    </p>
+    <button class="submit" id="confirma-btn-ok">OK</button>
 </div>

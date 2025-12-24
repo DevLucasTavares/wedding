@@ -1,81 +1,77 @@
+#admin-actions {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible;
+    box-sizing: border-box !important;
+}
+
 .add-button {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: var(--branco);
-  border: 3px solid var(--primaria);
-  color: var(--primaria);
-  font-size: 30px;
-  display: block;
-  margin: 0 auto 20px;
-  cursor: pointer;
+    all: unset !important;
+    box-sizing: border-box !important;
+    
+    width: 55px !important;
+    height: 55px !important;
+    
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    
+    background: #FFFFFF !important;
+    border: 4px solid var(--primaria) !important;
+    color: var(--primaria) !important;
+    border-radius: 50% !important;
+    font-size: 32px !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 10px rgba(179, 229, 252, 0.3) !important;
+    
+    line-height: 1 !important;
+    margin: 0 !important;
+
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+    transform-origin: center !important;
+}
+
+.add-button:hover {
+    transform: scale(1.1) rotate(90deg) !important;
+    background: var(--primaria) !important;
+    color: #FFFFFF !important;
+}
+
+.grid-itens {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px 40px 16px;
+    width: 100%;
 }
 
 .card {
-  background: var(--card-bg);
-  border-radius: 20px;
-  padding: 16px;
-  margin-bottom: 16px;
-  display: flex;
-  gap: 16px;
-  border: 2px solid var(--primaria);
+    background: #FFFFFF;
+    border-radius: 25px;
+    padding: 18px;
+    display: flex;
+    gap: 16px;
+    border: 3px solid var(--primaria);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 0.5s ease-out forwards;
 }
 
-.image-mock {
-  width: 100px;
-  height: 100px;
-  background: var(--secundaria);
-  border-radius: 15px;
-  flex-shrink: 0;
-}
+.image-mock { width: 90px; height: 90px; background: var(--secundaria); border-radius: 18px; flex-shrink: 0; border: 2px solid rgba(179, 229, 252, 0.5); }
+.card-content { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+.nome { margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--contraste); }
+.valor { font-weight: 800; font-size: 1.2rem; color: var(--acentuacao); margin-top: auto; }
+.card-interactions { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+.btn-escolher { background: var(--primaria); color: var(--contraste); padding: 10px 20px; border-radius: 20px; font-weight: 700; border: none; cursor: pointer; }
+.delete-btn { background: var(--secundaria); border: none; color: var(--acentuacao); cursor: pointer; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
-.card-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.nome {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--contraste);
-}
-
-.descricao {
-  font-size: 0.9rem;
-  margin: 8px 0;
-  line-height: 1.3;
-}
-
-.valor {
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: var(--acentuacao);
-  margin-bottom: 12px;
-}
-
-.card-interactions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-}
-
-.btn-escolher {
-  background: var(--primaria);
-  color: var(--contraste);
-  padding: 8px 16px;
-  border-radius: 15px;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 0.85rem;
-}
-
-.delete-btn {
-  background: none;
-  border: none;
-  color: var(--acentuacao);
-  cursor: pointer;
-  padding: 4px;
+@media (max-width: 400px) {
+    .card { flex-direction: column; align-items: center; text-align: center; }
+    .image-mock { width: 100%; height: 150px; }
 }
