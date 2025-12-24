@@ -1,18 +1,18 @@
-<header class="main-header" ng-class="{'header-hidden': isHidden, 'header-visible': !isHidden}">
+<header class="main-header" id="main-header">
   <nav class="nav-container">
     <div class="nav-links">
-      <a href="#/" class="nav-item">Início</a>
-      <a href="#/lista" class="nav-item">Lista</a>
-      <a href="#/historia" class="nav-item">Nossa História</a>
-      <a href="#/contato" class="nav-item">Contato</a>
+      <a href="javascript:void(0)" onclick="navegar('lista')" class="nav-item">Início</a>
+      <a href="javascript:void(0)" onclick="navegar('lista')" class="nav-item">Lista</a>
+      <a href="javascript:void(0)" class="nav-item">Nossa História</a>
+      <a href="javascript:void(0)" class="nav-item">Contato</a>
     </div>
 
     <div class="user-actions">
-      <div class="login-wrapper">
+      <div class="login-wrapper" id="login-trigger" onclick="navegar('login')">
         <div class="user-avatar">
           <i data-lucide="user"></i>
         </div>
-        <span class="login-text">Entrar</span>
+        <span class="login-text" id="user-display">Entrar</span>
       </div>
     </div>
   </nav>

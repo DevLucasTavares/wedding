@@ -1,0 +1,48 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-tabs">
+            <button id="tab-login" class="active" onclick="alternarAba('login')">Entrar</button>
+            <button id="tab-registro" onclick="alternarAba('registro')">Registrar</button>
+        </div>
+
+        <div id="form-login">
+            <h3 class="auth-title">Bem-vindo!</h3>
+            <div class="input-group">
+                <input type="email" id="login-email" placeholder="E-mail">
+            </div>
+            <div class="input-group">
+                <input type="password" id="login-senha" placeholder="Senha">
+            </div>
+            <button type="button" class="btn-auth" onclick="loginManual()">Entrar</button>
+        </div>
+
+        <div id="form-registro" style="display: none;">
+            <h3 class="auth-title">Crie sua conta</h3>
+            
+            <div class="input-group">
+                <input type="text" id="reg-nome" placeholder="Nome completo">
+            </div>
+            
+            <div class="input-group">
+                <input type="email" id="reg-email" placeholder="E-mail">
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="reg-telefone" placeholder="Telefone">
+            </div>
+            
+            <div class="input-group">
+                <input type="password" id="reg-senha" placeholder="Senha">
+            </div>
+            
+            <button type="button" class="btn-auth" onclick="registrarManual()">Cadastrar</button>
+        </div>
+
+        <div class="divider">ou</div>
+
+        <button class="btn-google" onclick="loginGoogle()">
+            <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+            Entrar com Google
+        </button>
+    </div>
+</div>
