@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="refresh" content="0; url=https://lucascarrarini.com/casamento/">
-    <script type="text/javascript">
-        window.location.href = "https://lucascarrarini.com/casamento/"
-    </script>
     <title>Redirecionando...</title>
+    <script type="text/javascript">
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        const destination = isLocal 
+            ? window.location.origin + "/casamento/" 
+            : "https://lucascarrarini.com/casamento/";
+
+        window.location.href = destination;
+    </script>
 </head>
 <body>
-    Se não for redirecionado automaticamente, <a href="https://lucascarrarini.com/casamento/">clique aqui</a>.
+    <p>Redirecionando para o convite...</p>
 </body>
 </html>
