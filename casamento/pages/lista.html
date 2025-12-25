@@ -16,23 +16,27 @@
     </button>
     <h3>Novo Presente</h3>
     
-    <input type="text" id="novo-item-nome" placeholder="O que é?">
-    
-    <select id="novo-item-area" class="modal-select">
-        <option value="" disabled selected>Selecione a área</option>
-        <option value="1">Banheiro</option>
-        <option value="2">Cozinha</option>
-        <option value="3">Eletrodomésticos</option>
-        <option value="4">Quarto</option>
-        <option value="5">Área de Serviço</option>
-        <option value="6">Outros</option>
-    </select>
+    <div class="form-novo-item">
+        <input type="text" id="novo-item-nome" placeholder="O que é?">
+        
+        <select id="novo-item-area" class="modal-select">
+            <option value="" disabled selected>Selecione a área</option>
+            <option value="1">Banheiro</option>
+            <option value="2">Cozinha</option>
+            <option value="3">Eletrodomésticos</option>
+            <option value="4">Quarto</option>
+            <option value="5">Área de Serviço</option>
+            <option value="6">Outros</option>
+        </select>
 
-    <textarea id="novo-item-descricao" placeholder="Algum detalhe?"></textarea>
-    <input type="number" id="novo-item-valor" placeholder="Valor (R$)">
-    <input type="text" id="novo-item-link" placeholder="Link de compra">
-    
-    <button class="submit" onclick="adicionarItem()">Adicionar</button>
+        <textarea id="novo-item-descricao" placeholder="Algum detalhe?"></textarea>
+        
+        <input type="text" id="novo-item-valor" placeholder="Valor (R$)">
+        
+        <input type="text" id="novo-item-link" placeholder="Link de compra">
+        
+        <button class="submit" onclick="adicionarItem()">Adicionar</button>
+    </div>
 </div>
 
 <div class="modal modal-aviso" id="modal-aviso-login" style="display: none;">

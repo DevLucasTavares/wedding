@@ -1,4 +1,3 @@
-// ALTERNAR ENTRE LOGIN E REGISTRO
 window.alternarAba = (aba) => {
     const loginForm = document.getElementById('form-login');
     const registroForm = document.getElementById('form-registro');
@@ -18,7 +17,6 @@ window.alternarAba = (aba) => {
     }
 };
 
-// LOGIN COM GOOGLE (NOME DA FUNÇÃO IGUAL AO HTML)
 window.loginGoogle = async () => {
     console.log("Iniciando Google Login...");
     const { error } = await supabase.auth.signInWithOAuth({
@@ -30,7 +28,6 @@ window.loginGoogle = async () => {
     if (error) alert("Erro Google: " + error.message);
 };
 
-// LOGIN MANUAL (IDs: login-email, login-senha)
 window.loginManual = async () => {
     const email = document.getElementById('login-email').value;
     const senha = document.getElementById('login-senha').value;
@@ -53,7 +50,6 @@ window.loginManual = async () => {
     }
 };
 
-// REGISTRO MANUAL (IDs: reg-nome, reg-email, reg-telefone, reg-senha)
 window.registrarManual = async () => {
     const nome = document.getElementById('reg-nome').value;
     const email = document.getElementById('reg-email').value;
@@ -84,7 +80,6 @@ window.registrarManual = async () => {
     }
 };
 
-// FUNÇÃO DESLOGAR (PARA O PERFIL)
 window.deslogar = async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {

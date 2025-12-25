@@ -38,13 +38,10 @@ function renderizarCards(itens) {
     if (window.lucide) lucide.createIcons();
 }
 
-// VALIDAÇÃO DE ACESSO
 window.validarAcessoDetalhes = (id) => {
-    // Se for Admin, entra sempre. Se for usuário logado, entra.
     if (isAdmin || usuarioLogado) {
         abrirModalDetalhes(id);
     } else {
-        // Se não estiver logado, abre o modal de aviso de login
         document.getElementById('modal-aviso-login').style.display = 'block';
         document.getElementById('modal-overlay').style.display = 'block';
     }
@@ -101,36 +98,55 @@ window.onclick = (e) => {
 };
 
 window.adicionarItem = async () => {
-    const nome = document.getElementById('novo-item-nome').value;
-    const area = document.getElementById('novo-item-area').value;
-    const desc = document.getElementById('novo-item-descricao').value;
-    const valor = document.getElementById('novo-item-valor').value;
-    const link = document.getElementById('novo-item-link').value;
+    const elNome = document.getElementById('novo-item-nome');
+    const elArea = document.getElementById('novo-item-area');
+    const elDesc = document.getElementById('novo-item-descricao');
+    const elValor = document.getElementById('novo-item-valor');
+    const elLink = document.getElementById('novo-item-link');
 
-    if (!nome || !area || !desc || !valor || !link) {
-        return exibirAviso('Atenção 💗', 'Preencha todos os campos.');
+    const nome = elNome.value.trim();
+    const areaRaw = elArea.value;
+    const desc = elDesc.value.trim();
+    const valorRaw = elValor.value.trim();
+    const link = elLink.value.trim();
+
+    if (!nome || !areaRaw || !desc || !valorRaw || !link) {
+        return exibirAviso('Atenção 💗', 'Preencha todos os campos corretamente.');
+    }
+
+    const valorLimpo = valorRaw.replace(',', '.').replace(/[^\d.]/g, '');
+    const valorFinal = parseFloat(valorLimpo);
+
+    const areaFinal = parseInt(areaRaw);
+
+    if (isNaN(valorFinal)) {
+        return exibirAviso('Erro no Valor 💔', 'O preço informado é inválido.');
     }
     
+    if (isNaN(areaFinal)) {
+        return exibirAviso('Erro na Área 💔', 'Selecione uma categoria válida.');
+    }
+
+    console.log("Tentando inserir:", { nome, area: areaFinal, valor: valorFinal });
+
     const { error } = await supabase.from('itens').insert([{ 
-        nome, 
-        area: parseInt(area),
+        nome: nome, 
+        area: areaFinal,
         descricao: desc, 
-        valor: parseFloat(valor), 
+        valor: valorFinal, 
         link_compra: link 
     }]);
 
     if (!error) { 
         fecharTodosModais(); 
-        carregarItens(); 
+        if (typeof carregarItens === 'function') carregarItens(); 
         
-        document.getElementById('novo-item-nome').value = '';
-        document.getElementById('novo-item-area').value = '';
-        document.getElementById('novo-item-descricao').value = '';
-        document.getElementById('novo-item-valor').value = '';
-        document.getElementById('novo-item-link').value = '';
+        [elNome, elArea, elDesc, elValor, elLink].forEach(el => el.value = '');
+        
+        elDesc.style.height = 'auto';
     } else {
-        console.error("Erro Supabase:", error);
-        exibirAviso('Erro 💔', 'Não foi possível adicionar o item.');
+        console.error("ERRO DETALHADO DO SUPABASE:", error);
+        exibirAviso('Erro 💔', `Motivo: ${error.message}`);
     }
 };
 

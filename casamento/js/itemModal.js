@@ -1,4 +1,3 @@
-// Estado global das cores do carrossel para permitir o giro infinito
 let estadoFotos = ['#D7CCC8', 'var(--primaria)', '#F5F5F5'];
 
 window.abrirModalDetalhes = async (id) => {
@@ -29,14 +28,12 @@ window.abrirModalDetalhes = async (id) => {
     modal.style.display = 'block';
 };
 
-// Lógica de Giro Infinito: Reorganiza o array de fotos
 window.girarCarrossel = (direcao, item, comprador) => {
     if (direcao === 'esq') {
-        estadoFotos.unshift(estadoFotos.pop()); // Move o último para o início
+        estadoFotos.unshift(estadoFotos.pop());
     } else {
-        estadoFotos.push(estadoFotos.shift()); // Move o primeiro para o fim
+        estadoFotos.push(estadoFotos.shift());
     }
-    // Re-renderiza o modal para atualizar as posições das cores
     renderizarConteudoModal(item, comprador);
 };
 
@@ -56,7 +53,6 @@ function renderizarConteudoModal(item, comprador) {
     const modal = document.getElementById('modal-detalhes-item');
     const nomeArea = getAreaNome(item.area);
     
-    // Preparar referências seguras para as funções de clique
     const itemRef = JSON.stringify(item).replace(/"/g, '&quot;');
     const compRef = comprador ? JSON.stringify(comprador).replace(/"/g, '&quot;') : 'null';
 
