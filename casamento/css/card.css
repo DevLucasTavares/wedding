@@ -206,11 +206,20 @@
     box-shadow: none !important;
 }
 
-#modal-novo-presente {
+/* #modal-novo-presente {
     padding: 30px !important;
     border-radius: 30px !important;
     max-height: 90vh;
     overflow-y: auto;
+} */
+
+#modal-novo-presente {
+    position: absolute !important; /* Muda de fixed para absolute */
+    top: 200px !important;         /* Distância fixa do topo do elemento pai */
+    left: 50% !important;
+    transform: translateX(-50%) !important; /* Centraliza apenas horizontalmente */
+    display: none;                 /* O JS vai mudar para block */
+    z-index: 9999;
 }
 
 .form-novo-item {

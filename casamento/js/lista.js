@@ -73,9 +73,11 @@ window.validarAcessoDetalhes = (id, isReservado) => {
 };
 
 window.abrirModal = () => {
+    console.log("Abrindo modal novo presente");
     document.getElementById('modal-novo-presente').style.display = 'block';
-    document.getElementById('modal-overlay').style.display = 'block';
-    document.body.classList.add('modal-open');
+    // document.getElementById('modal-overlay').style.display = 'block';
+    // document.body.classList.add('modal-open');
+    console.log("Modal aberto" );
 };
 
 window.fecharModal = (id) => {
