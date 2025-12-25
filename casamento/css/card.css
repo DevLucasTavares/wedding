@@ -39,41 +39,134 @@
 .grid-itens {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
     padding: 0 16px 40px 16px;
     width: 100%;
 }
 
 .card {
     background: #FFFFFF;
-    border-radius: 25px;
-    padding: 18px;
+    border-radius: 28px;
+    padding: 16px;
     display: flex;
-    gap: 16px;
-    border: 3px solid var(--primaria);
+    gap: 20px;
+    border: 3.5px solid var(--primaria);
     position: relative;
     overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 160px;
+    align-items: center;
     animation: fadeIn 0.5s ease-out forwards;
 }
 
+.card:not(.card-reservado):hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(179, 229, 252, 0.5);
+    border-color: var(--acentuacao);
+}
+
+/* CONTAINER DA IMAGEM NO CARD */
+.image-container {
+    width: 145px;
+    height: 145px;
+    flex-shrink: 0;
+    border-radius: 22px;
+    position: relative;
+    overflow: hidden;
+    background: #f9f9f9; /* Fundo neutro suave */
+    border: 2px solid rgba(179, 229, 252, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* AJUSTE DE ENQUADRAMENTO DA FOTO DO CARD */
+.card-image {
+    width: 100%;
+    height: 100%;
+    /* contain garante que o produto apareça todo, 
+       mas o scale(1.05) tira aquelas bordinhas brancas excessivas */
+    object-fit: contain; 
+    transform: scale(1.05); 
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover .card-image {
+    transform: scale(1.1); /* Efeito de zoom suave no hover */
+}
+
 .image-mock { 
-    width: 90px; 
-    height: 90px; 
+    width: 100%; 
+    height: 100%; 
     background: var(--secundaria); 
     border-radius: 18px; 
-    flex-shrink: 0; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 2px solid rgba(179, 229, 252, 0.5); 
+}
+
+.image-mock i {
+    width: 35px;
+    height: 35px;
+    color: var(--acentuacao);
+    opacity: 0.5;
+}
+
+.badge-reservado {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--acentuacao);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 10px 0;
+    backdrop-filter: blur(4px);
+    border-top: 1px solid rgba(179, 229, 252, 0.2);
+    border-bottom: 1px solid rgba(179, 229, 252, 0.2);
+    z-index: 2;
 }
 
 .card-content { 
     flex: 1; 
     display: flex; 
     flex-direction: column; 
-    justify-content: space-between; 
+    justify-content: space-between;
+    align-self: stretch; 
+    padding: 5px 0;
 }
 
-.nome { margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--contraste); }
-.valor { font-weight: 800; font-size: 1.2rem; color: var(--acentuacao); margin-top: auto; }
+.nome { 
+    margin: 0; 
+    font-size: 1.3rem; 
+    font-weight: 800; 
+    color: var(--contraste); 
+    line-height: 1.2;
+}
+
+.descricao { 
+    font-size: 0.95rem; 
+    color: #78909C; 
+    margin: 8px 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.valor { 
+    font-weight: 900; 
+    font-size: 1.5rem; 
+    color: var(--acentuacao); 
+    margin-top: auto;
+}
 
 .card-interactions { 
     display: flex; 
@@ -105,9 +198,19 @@
     justify-content: center; 
 }
 
+.card-reservado {
+    opacity: 0.75;
+    background: #F8FDFF;
+    cursor: default;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
 #modal-novo-presente {
     padding: 30px !important;
     border-radius: 30px !important;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .form-novo-item {
@@ -151,13 +254,73 @@
     background: #fff;
 }
 
+.foto-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.btn-camera-upload {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--secundaria);
+    border: 2px solid var(--primaria);
+    color: var(--acentuacao);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-camera-upload:hover { transform: scale(1.1); }
+
+.preview-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* AJUSTE NOS PREVIEWS DE UPLOAD */
+.preview-item {
+    width: 60px;
+    height: 60px;
+    border-radius: 14px;
+    object-fit: cover; /* Aqui cover é melhor para ver o que foi upado rápido */
+    border: 2.5px solid var(--primaria);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#label-fotos {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--contraste);
+    opacity: 0.7;
+}
+
 input::-webkit-outer-spin-button, 
 input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
 input[type=number] { appearance: textfield; -moz-appearance: textfield; }
 
 @media (max-width: 600px) {
-    .card { flex-direction: column; align-items: center; text-align: center; }
-    .image-mock { width: 100%; height: 150px; }
+    .card { 
+        gap: 15px; 
+        padding: 12px;
+        min-height: 140px;
+    }
+    .image-container { 
+        width: 120px; 
+        height: 120px; 
+    }
+    .card-image {
+        transform: scale(1.02); /* Menos zoom em telas pequenas */
+    }
+    .nome { font-size: 1.15rem; }
+    .valor { font-size: 1.3rem; }
+    .descricao { -webkit-line-clamp: 2; }
     #modal-novo-presente { width: 95% !important; padding: 20px !important; }
 }

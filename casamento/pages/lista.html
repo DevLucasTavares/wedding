@@ -34,6 +34,14 @@
         <input type="text" id="novo-item-valor" placeholder="Valor (R$)">
         
         <input type="text" id="novo-item-link" placeholder="Link de compra">
+        <div class="foto-upload-container">
+            <input type="file" id="input-fotos-novo" accept="image/*" multiple style="display: none;" onchange="gerarPreviewFotos(this)">
+            <button type="button" class="btn-camera-upload" onclick="document.getElementById('input-fotos-novo').click()">
+                <i data-lucide="camera"></i>
+            </button>
+            <span id="label-fotos">Adicione fotos do presente</span>
+            <div id="preview-fotos-container" class="preview-grid"></div>
+        </div>
         
         <button class="submit" onclick="adicionarItem()">Adicionar</button>
     </div>

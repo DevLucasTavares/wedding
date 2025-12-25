@@ -1,0 +1,52 @@
+.foto-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.btn-camera-upload {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--secundaria);
+    border: 2px solid var(--primaria);
+    color: var(--acentuacao);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.btn-camera-upload:hover { transform: scale(1.1); }
+.btn-camera-upload i { width: 22px; height: 22px; stroke-width: 2.5; }
+
+#label-fotos {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--contraste);
+    opacity: 0.7;
+}
+
+.preview-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.preview-item {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    object-fit: cover;
+    border: 2px solid var(--primaria);
+    animation: modalPop 0.3s ease;
+}
+
+body.modal-open {
+    overflow: hidden;
+    height: 100vh;
+}
