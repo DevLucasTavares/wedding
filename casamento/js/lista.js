@@ -4,7 +4,7 @@ async function carregarItens() {
     const { data: itens, error } = await supabase
         .from('itens')
         .select('*, fotos_itens(url)')
-        .order('nome', { ascending: true });
+        .order('area', { ascending: true });
 
     if (error) return console.error(error);
     renderizarCards(itens);

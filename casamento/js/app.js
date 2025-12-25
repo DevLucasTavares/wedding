@@ -14,9 +14,12 @@ async function init() {
     await atualizarEstado(session);
     await carregarPagina();
 
-    supabase.auth.onAuthStateChange(async (event, session) => {
-        await atualizarEstado(session);
-        await carregarPagina();
+    supabase.auth.onAuthStateChange(function (event, session) {
+        setTimeout(function () {
+            atualizarEstado(session).then(function () {
+                carregarPagina();
+            });
+        });
     });
 }
 
