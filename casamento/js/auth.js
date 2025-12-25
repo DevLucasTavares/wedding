@@ -1,79 +1,95 @@
-const REDIRECT_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-    ? window.location.origin
-    : 'https://lucascarrarini.com/casamento/';
-
+// ALTERNAR ENTRE LOGIN E REGISTRO
 window.alternarAba = (aba) => {
-    const formLogin = document.getElementById('form-login');
-    const formRegistro = document.getElementById('form-registro');
+    const loginForm = document.getElementById('form-login');
+    const registroForm = document.getElementById('form-registro');
     const tabLogin = document.getElementById('tab-login');
     const tabRegistro = document.getElementById('tab-registro');
 
     if (aba === 'login') {
-        formLogin.style.display = 'block';
-        formRegistro.style.display = 'none';
+        loginForm.style.display = 'block';
+        registroForm.style.display = 'none';
         tabLogin.classList.add('active');
         tabRegistro.classList.remove('active');
     } else {
-        formLogin.style.display = 'none';
-        formRegistro.style.display = 'block';
+        loginForm.style.display = 'none';
+        registroForm.style.display = 'block';
         tabLogin.classList.remove('active');
         tabRegistro.classList.add('active');
     }
 };
 
+// LOGIN COM GOOGLE (NOME DA FUNÇÃO IGUAL AO HTML)
+window.loginGoogle = async () => {
+    console.log("Iniciando Google Login...");
+    const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: window.location.origin + window.location.pathname
+        }
+    });
+    if (error) alert("Erro Google: " + error.message);
+};
+
+// LOGIN MANUAL (IDs: login-email, login-senha)
+window.loginManual = async () => {
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-senha').value;
+
+    if (!email || !senha) {
+        alert("Preencha e-mail e senha!");
+        return;
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: senha
+    });
+
+    if (error) {
+        alert("Erro no login: " + error.message);
+    } else {
+        console.log("Login realizado!");
+        if (window.navegar) window.navegar('lista');
+    }
+};
+
+// REGISTRO MANUAL (IDs: reg-nome, reg-email, reg-telefone, reg-senha)
 window.registrarManual = async () => {
     const nome = document.getElementById('reg-nome').value;
     const email = document.getElementById('reg-email').value;
     const telefone = document.getElementById('reg-telefone').value;
     const senha = document.getElementById('reg-senha').value;
 
-    document.querySelectorAll('.input-group input').forEach(i => i.classList.remove('error'));
+    if (!nome || !email || !senha) {
+        alert("Nome, E-mail e Senha são obrigatórios!");
+        return;
+    }
 
-    let temErro = false;
-    if (!nome) { document.getElementById('reg-nome').classList.add('error'); temErro = true; }
-    if (!email) { document.getElementById('reg-email').classList.add('error'); temErro = true; }
-    if (!telefone) { document.getElementById('reg-telefone').classList.add('error'); temErro = true; }
-    if (!senha) { document.getElementById('reg-senha').classList.add('error'); temErro = true; }
-
-    if (temErro) return;
-
-    const { error } = await _supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
         email: email,
         password: senha,
-        options: { 
-            emailRedirectTo: REDIRECT_URL,
-            data: { 
+        options: {
+            data: {
                 full_name: nome,
-                phone: telefone 
-            } 
+                phone: telefone
+            }
         }
     });
 
     if (error) {
-        alert(error.message);
+        alert("Erro ao registrar: " + error.message);
     } else {
-        alert("Sucesso! Verifique seu e-mail.");
+        alert("Cadastro realizado! Verifique seu e-mail.");
         alternarAba('login');
     }
 };
 
-window.loginManual = async () => {
-    const email = document.getElementById('login-email').value;
-    const senha = document.getElementById('login-senha').value;
-
-    const { error } = await _supabase.auth.signInWithPassword({
-        email: email,
-        password: senha
-    });
-
-    if (error) alert(error.message);
-};
-
-window.loginGoogle = async () => {
-    await _supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { 
-            redirectTo: REDIRECT_URL
-        }
-    });
+// FUNÇÃO DESLOGAR (PARA O PERFIL)
+window.deslogar = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        if (window.navegar) window.navegar('login');
+    } else {
+        alert("Erro ao deslogar: " + error.message);
+    }
 };

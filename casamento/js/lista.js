@@ -20,7 +20,7 @@ function renderizarCards(itens) {
     }
 
     container.innerHTML = itens.map(item => `
-        <div class="card">
+        <div class="card" onclick="validarAcessoDetalhes('${item.id}')" style="cursor: pointer;">
             <div class="image-mock"></div>
             <div class="card-content">
                 <h2 class="nome">${item.nome}</h2>
@@ -28,15 +28,27 @@ function renderizarCards(itens) {
                 <span class="valor">R$ ${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
                 <div class="card-interactions">
                     ${!item.id_usuario 
-                        ? `<button class="btn-escolher" onclick="tentarEscolher('${item.id}', '${item.nome}')">Escolher Item</button>`
+                        ? `<button class="btn-escolher">Escolher Item</button>`
                         : `<button class="btn-escolher" style="background: var(--secundaria); cursor: not-allowed; border: none; opacity: 0.7;" disabled>Já Reservado 🤍</button>`}
-                    ${isAdmin ? `<button class="delete-btn" onclick="removerItem('${item.id}')"><i data-lucide="trash-2"></i></button>` : ''}
                 </div>
             </div>
         </div>
     `).join('');
+    
     if (window.lucide) lucide.createIcons();
 }
+
+// VALIDAÇÃO DE ACESSO
+window.validarAcessoDetalhes = (id) => {
+    // Se for Admin, entra sempre. Se for usuário logado, entra.
+    if (isAdmin || usuarioLogado) {
+        abrirModalDetalhes(id);
+    } else {
+        // Se não estiver logado, abre o modal de aviso de login
+        document.getElementById('modal-aviso-login').style.display = 'block';
+        document.getElementById('modal-overlay').style.display = 'block';
+    }
+};
 
 window.fecharModal = (id) => {
     const modal = document.getElementById(id);
@@ -125,12 +137,16 @@ window.adicionarItem = async () => {
 window.removerItem = (id) => {
     exibirAviso('Remover item? 💔', 'Esta ação não pode ser desfeita.', true, async () => {
         const { error } = await supabase.from('itens').delete().eq('id', id);
-        if (!error) carregarItens();
+        if (!error) {
+            fecharTodosModais();
+            carregarItens();
+        }
     });
 };
 
 window.tentarEscolher = (id, nome) => {
     if (!usuarioLogado) {
+        fecharTodosModais();
         document.getElementById('modal-aviso-login').style.display = 'block';
         document.getElementById('modal-overlay').style.display = 'block';
         return;
@@ -139,6 +155,7 @@ window.tentarEscolher = (id, nome) => {
     exibirAviso('Reservar? 🎁', `Deseja escolher "${nome}"?`, true, async () => {
         const { error } = await supabase.from('itens').update({ id_usuario: usuarioLogado.id }).eq('id', id);
         if (!error) {
+            fecharTodosModais();
             exibirAviso('Sucesso! 🤍', 'Item reservado com sucesso!');
             carregarItens();
         } else {

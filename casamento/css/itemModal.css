@@ -1,0 +1,189 @@
+/* Layout Base do Modal de Detalhes (Geral/PC) */
+.modal-detalhes {
+    width: 95% !important;
+    max-width: 850px !important;
+    padding: 30px !important;
+    border-radius: 30px !important;
+}
+
+.modal-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 40px;
+    align-items: center;
+}
+
+/* CARROSSEL VERTICAL (PC) */
+.carrossel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.foto-lateral {
+    width: 120px;
+    height: 70px;
+    opacity: 0.4;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+    flex-shrink: 0;
+}
+
+.foto-central {
+    width: 200px;
+    height: 200px;
+    border-radius: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    z-index: 2;
+    transition: background-color 0.3s ease;
+    border: 4px solid white;
+}
+
+/* COLUNA DIREITA */
+.modal-col-direita {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.modal-titulo {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--contraste);
+    text-align: left;
+    margin: 0;
+}
+
+.modal-descricao {
+    font-size: 1rem;
+    color: var(--contraste);
+    line-height: 1.5;
+}
+
+/* VALOR E ÍCONE */
+.campo-valor-row {
+    display: flex;
+    align-items: center; 
+    justify-content: flex-start;
+    gap: 6px;
+    height: 45px; 
+}
+
+.campo-valor-row i, 
+.campo-valor-row i svg {
+    width: 28px !important;
+    height: 28px !important;
+    color: var(--acentuacao) !important;
+    stroke: var(--acentuacao) !important;
+    display: flex;
+    align-items: center;
+}
+
+.campo-valor-row input, 
+.campo-valor-row span {
+    background: transparent !important;
+    border: none !important;
+    color: var(--acentuacao) !important;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    outline: none !important;
+    height: 100%;
+    line-height: 45px; 
+    display: flex;
+    align-items: center;
+}
+
+/* CAMPOS ADMIN (TEXTAREA SEM RESIZE) */
+.campo-admin {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.campo-admin input, 
+.campo-admin select, 
+.campo-admin textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 15px;
+    border: 1px solid #eee;
+    background: #fdfdfd;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.campo-admin textarea {
+    min-height: 100px;
+    resize: none !important; /* MATA O PUXADOR LIXO AQUI */
+}
+
+.campo-admin input:focus, 
+.campo-admin select:focus, 
+.campo-admin textarea:focus {
+    border-color: var(--primaria);
+}
+
+.input-titulo {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    border: 1px dashed transparent !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin-bottom: 5px;
+}
+
+.input-titulo:focus { border-color: var(--primaria) !important; }
+
+/* BOTÕES */
+.modal-acoes-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.btn-acao-mini {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-acao-mini i, .btn-acao-mini i svg { 
+    width: 18px !important; 
+    height: 18px !important; 
+    stroke: currentColor !important;
+}
+
+.btn-loja { background: var(--contraste); color: white; }
+.btn-pix-mini { background: #00BFA5; color: white; }
+.btn-save-mini { background: var(--primaria); color: var(--contraste); }
+.btn-delete-mini { background: #ff5252; color: white; }
+
+/* --- MOBILE --- */
+@media (max-width: 600px) {
+    .modal-layout { display: flex; flex-direction: column; gap: 15px; }
+    .carrossel-container { flex-direction: row; height: 140px; }
+    .foto-lateral { width: 50px; height: 80px; }
+    .foto-central { width: 120px; height: 120px; }
+    .modal-titulo, .input-titulo { text-align: center; font-size: 1.6rem; }
+    .campo-valor-row { justify-content: center; }
+    .btn-acao-mini { flex-direction: column; font-size: 0.7rem; gap: 4px; }
+}
+
+/* Limpeza setas */
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
