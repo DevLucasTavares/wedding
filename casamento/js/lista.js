@@ -116,7 +116,6 @@ window.adicionarItem = async () => {
 
     const valorLimpo = valorRaw.replace(',', '.').replace(/[^\d.]/g, '');
     const valorFinal = parseFloat(valorLimpo);
-
     const areaFinal = parseInt(areaRaw);
 
     if (isNaN(valorFinal)) {
@@ -127,26 +126,28 @@ window.adicionarItem = async () => {
         return exibirAviso('Erro na Área 💔', 'Selecione uma categoria válida.');
     }
 
-    console.log("Tentando inserir:", { nome, area: areaFinal, valor: valorFinal });
+    try {
+        if (!supabase) throw new Error("Cliente Supabase não encontrado!");
 
-    const { error } = await supabase.from('itens').insert([{ 
-        nome: nome, 
-        area: areaFinal,
-        descricao: desc, 
-        valor: valorFinal, 
-        link_compra: link 
-    }]);
+        const { error } = await supabase.from('itens').insert([{ 
+            nome, 
+            area: areaFinal,
+            descricao: desc, 
+            valor: valorFinal, 
+            link_compra: link 
+        }]).select();
 
-    if (!error) { 
+        if (error) throw error;
+
         fecharTodosModais(); 
         if (typeof carregarItens === 'function') carregarItens(); 
         
         [elNome, elArea, elDesc, elValor, elLink].forEach(el => el.value = '');
-        
         elDesc.style.height = 'auto';
-    } else {
-        console.error("ERRO DETALHADO DO SUPABASE:", error);
-        exibirAviso('Erro 💔', `Motivo: ${error.message}`);
+
+    } catch (err) {
+        console.error("Erro ao adicionar item:", err);
+        exibirAviso('Erro 💔', 'Não foi possível salvar o presente. Tente atualizar a página.');
     }
 };
 
