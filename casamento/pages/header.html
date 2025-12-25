@@ -1,10 +1,10 @@
 <header class="main-header" id="main-header">
   <nav class="nav-container">
     <div class="nav-links">
-      <a href="javascript:void(0)" onclick="navegar('lista')" class="nav-item">Início</a>
-      <a href="javascript:void(0)" onclick="navegar('lista')" class="nav-item">Lista</a>
-      <a href="javascript:void(0)" class="nav-item">Nossa História</a>
-      <a href="javascript:void(0)" class="nav-item">Contato</a>
+      <a href="javascript:void(0)" onclick="navegar('home')" class="nav-item">Home</a>
+      <a href="javascript:void(0)" onclick="navegar('lista')" class="nav-item">Lista de Presentes</a>
+      <a href="javascript:void(0)" onclick="navegar('carta')" class="nav-item">Carta de Agradecimento</a>
+      <a href="javascript:void(0)" onclick="navegar('contato')" class="nav-item">Contato</a>
     </div>
 
     <div class="user-actions">
@@ -17,3 +17,23 @@
     </div>
   </nav>
 </header>
+
+<div class="modal modal-aviso" id="modal-bloqueio-lista" style="display: none;">
+    <button class="close" onclick="fecharModal('modal-bloqueio-lista')">
+        <i data-lucide="x"></i>
+    </button>
+    <h3>Vamos nessa!</h3>
+    <p style="color: var(--contraste); margin-bottom: 20px;">
+        Crie uma conta ou faça login para ver o que preparamos!
+    </p>
+    <button class="submit" onclick="navegar('login')">Entrar</button>
+</div>
+
+<div class="modal modal-aviso" id="modal-carta-spicy" style="display: none;">
+    <button class="close" onclick="fecharModal('modal-carta-spicy')">
+        <i data-lucide="x"></i>
+    </button>
+    <h3>Uma mensagem surpresa!</h3>
+    <p id="carta-spicy-msg" style="color: var(--contraste); margin-bottom: 20px;"></p>
+    <div id="carta-spicy-btn-container"></div>
+</div>
