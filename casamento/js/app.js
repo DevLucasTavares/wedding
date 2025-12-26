@@ -17,7 +17,7 @@ async function init() {
     supabase.auth.onAuthStateChange(function (event, session) {
         setTimeout(function () {
             atualizarEstado(session).then(function () {
-                carregarPagina();
+                // carregarPagina();
             });
         });
     });
