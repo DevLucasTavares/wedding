@@ -46,7 +46,7 @@ window.loginManual = async () => {
         alert("Erro no login: " + error.message);
     } else {
         console.log("Login realizado!");
-        if (window.navegar) window.navegar('lista');
+        if (window.navegar) window.navegar('perfil');
     }
 };
 

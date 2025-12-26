@@ -1,4 +1,5 @@
 let arquivosSelecionados = [];
+let itensLocais = [];
 
 async function carregarItens() {
     const { data: itens, error } = await supabase
@@ -7,18 +8,47 @@ async function carregarItens() {
         .order('area', { ascending: true });
 
     if (error) return console.error(error);
-    renderizarCards(itens);
+
+    itensLocais = itens;
+    window.ordenarItens();
 }
 
 function renderizarCards(itens) {
     const container = document.getElementById('lista-itens');
-    const adminActions = document.getElementById('admin-actions');
+    const cabecalhoLista = document.getElementById('cabecalho-lista');
     if (!container) return;
 
-    if (adminActions) adminActions.innerHTML = '';
+    if (cabecalhoLista && !document.getElementById('filtro-ordenacao')) {
+        let htmlCabecalho = `
+            <div id="filtro-ordenacao-container" style="display: flex; align-items: center; gap: 10px;">
+                <select id="filtro-ordenacao" onchange="window.mudarCriterio(this.value)">
+                    <option value="preferencia">Preferência dos Noivos</option>
+                    <option value="valor">Valor</option>
+                    <option value="area">Área</option>
+                </select>
+                
+                <div id="controles-extras" style="display: flex; align-items: center;">
+                    <select id="filtro-area-categoria" style="display: none;" onchange="window.ordenarItens()">
+                        <option value="todas">Todas as Áreas</option>
+                        <option value="1">Banheiro</option>
+                        <option value="2">Cozinha</option>
+                        <option value="3">Eletrodomésticos</option>
+                        <option value="4">Quarto</option>
+                        <option value="5">Área de Serviço</option>
+                        <option value="6">Outros</option>
+                    </select>
+                    
+                    <button id="btn-ordem-valor" style="display: none; background: none; border: none; cursor: pointer;" onclick="window.alternarDirecaoValor()">
+                        <i data-lucide="arrow-up"></i>
+                    </button>
+                </div>
+            </div>
+        `;
 
-    if (isAdmin && adminActions) {
-        adminActions.innerHTML = `<button class="add-button" onclick="abrirModal()">+</button>`;
+        if (isAdmin) {
+            htmlCabecalho += `<button class="add-button" onclick="abrirModal()">+</button>`;
+        }
+        cabecalhoLista.innerHTML = htmlCabecalho;
     }
 
     container.innerHTML = itens.map(item => {
@@ -139,22 +169,30 @@ window.gerarPreviewFotos = (input) => {
 
 async function fazerUploadFotos(itemId) {
     const urlsSalvas = [];
+
     for (const [index, file] of arquivosSelecionados.entries()) {
+
         const extensao = file.name.split('.').pop();
         const nomeArquivo = `${itemId}/${Date.now()}_${index}.${extensao}`;
+
         const { data, error } = await supabase.storage
             .from('fotos_itens')
             .upload(nomeArquivo, file);
+
         if (error) continue;
+
         const { data: publicUrlData } = supabase.storage
             .from('fotos_itens')
             .getPublicUrl(nomeArquivo);
+
         urlsSalvas.push(publicUrlData.publicUrl);
+
     }
     return urlsSalvas;
 }
 
 window.adicionarItem = async () => {
+
     const elNome = document.getElementById('novo-item-nome');
     const elArea = document.getElementById('novo-item-area');
     const elDesc = document.getElementById('novo-item-descricao');
@@ -165,40 +203,60 @@ window.adicionarItem = async () => {
     const desc = elDesc.value.trim();
     const valorRaw = elValor.value.trim();
     const link = elLink.value.trim();
+
     if (!nome || !areaRaw || !desc || !valorRaw || !link) {
         return exibirAviso('Atenção 💗', 'Preencha todos os campos corretamente.');
     }
+
     const valorLimpo = valorRaw.replace(',', '.').replace(/[^\d.]/g, '');
     const valorFinal = parseFloat(valorLimpo);
     const areaFinal = parseInt(areaRaw);
+
     if (isNaN(valorFinal) || isNaN(areaFinal)) {
         return exibirAviso('Erro 💔', 'Verifique o valor e a área selecionada.');
     }
+
     try {
+
         if (!supabase) throw new Error("Cliente Supabase não encontrado!");
+
         const { data: itemCriado, error: erroItem } = await supabase
             .from('itens')
             .insert([{ nome, area: areaFinal, descricao: desc, valor: valorFinal, link_compra: link }])
             .select().single();
+
         if (erroItem) throw erroItem;
+
         if (arquivosSelecionados.length > 0) {
             const urls = await fazerUploadFotos(itemCriado.id);
+
             if (urls.length > 0) {
                 const rowsFotos = urls.map(u => ({ item_id: itemCriado.id, url: u }));
-                await supabase.from('fotos_itens').insert(rowsFotos);
+                await supabase
+                    .from('fotos_itens')
+                    .insert(rowsFotos);
             }
         }
+
         fecharTodosModais(); 
         carregarItens();
+
         [elNome, elArea, elDesc, elValor, elLink].forEach(el => el.value = '');
+
     } catch (err) {
         exibirAviso('Erro 💔', 'Não foi possível salvar o presente.');
+
     }
 };
 
 window.removerItem = (id) => {
+    console.log("Chegou em removerItem")
     exibirAviso('Remover item? 💔', 'Esta ação não pode ser desfeita.', true, async () => {
-        const { error } = await supabase.from('itens').delete().eq('id', id);
+        const { error } = await supabase
+            .from('itens')
+            .delete()
+            .eq('id', id);
+
         if (!error) {
             fecharTodosModais();
             carregarItens();
@@ -207,6 +265,7 @@ window.removerItem = (id) => {
 };
 
 window.tentarEscolher = (id, nome) => {
+
     if (!usuarioLogado) {
         fecharTodosModais();
         document.getElementById('modal-aviso-login').style.display = 'block';
@@ -214,8 +273,14 @@ window.tentarEscolher = (id, nome) => {
         document.body.classList.add('modal-open');
         return;
     }
+
     exibirAviso('Reservar? 🎁', `Deseja escolher "${nome}"?`, true, async () => {
-        const { error } = await supabase.from('itens').update({ id_usuario: usuarioLogado.id }).eq('id', id);
+
+        const { error } = await supabase
+            .from('itens')
+            .update({ id_usuario: usuarioLogado.id })
+            .eq('id', id);
+        
         if (!error) {
             fecharTodosModais();
             exibirAviso('Sucesso! 🤍', 'Item reservado com sucesso!');
@@ -225,16 +290,77 @@ window.tentarEscolher = (id, nome) => {
 };
 
 window.exibirAviso = (titulo, msg, temConfirm = false, callback = null) => {
+    console.log("Entrou em exibirAviso")
+
     const modalAviso = document.getElementById('modal-confirmacao');
     document.getElementById('confirma-titulo').innerText = titulo;
     document.getElementById('confirma-mensagem').innerText = msg;
+
     const btnOk = document.getElementById('confirma-btn-ok');
     btnOk.innerText = temConfirm ? "Confirmar" : "Entendi";
     btnOk.onclick = () => { 
         if (callback) callback(); 
         fecharModal('modal-confirmacao'); 
     };
+
     modalAviso.style.display = 'block';
     document.getElementById('modal-overlay').style.display = 'block';
     document.body.classList.add('modal-open');
+};
+
+let direcaoValor = 'asc';
+
+window.mudarCriterio = (criterio) => {
+    const filtroArea = document.getElementById('filtro-area-categoria');
+    const btnValor = document.getElementById('btn-ordem-valor');
+    
+    filtroArea.style.display = (criterio === 'area') ? 'block' : 'none';
+    btnValor.style.display = (criterio === 'valor') ? 'block' : 'none';
+    
+    window.ordenarItens();
+};
+
+window.alternarDirecaoValor = () => {
+    direcaoValor = direcaoValor === 'asc' ? 'desc' : 'asc';
+    const icone = document.querySelector('#btn-ordem-valor i');
+    if (icone) {
+
+        icone.setAttribute('data-lucide', direcaoValor === 'asc' ? 'arrow-up' : 'arrow-down');
+    }
+    if (window.lucide) lucide.createIcons();
+    window.ordenarItens();
+};
+
+window.ordenarItens = () => {
+    const elementoCriterio = document.getElementById('filtro-ordenacao');
+    const elementoCategoria = document.getElementById('filtro-area-categoria');
+    
+    const criterio = (elementoCriterio && elementoCriterio.value) || 'preferencia';
+    const categoriaSelecionada = (elementoCategoria && elementoCategoria.value) || 'todas';
+
+    let itensFiltrados = [...itensLocais];
+
+    if (criterio === 'area' && categoriaSelecionada !== 'todas') {
+        itensFiltrados = itensFiltrados.filter(item => item.area == categoriaSelecionada);
+    }
+
+    itensFiltrados.sort((a, b) => {
+        if (criterio === 'valor') {
+            return direcaoValor === 'asc' ? a.valor - b.valor : b.valor - a.valor;
+        } 
+        else if (criterio === 'area') {
+            if (a.area !== b.area) return a.area - b.area;
+        } 
+        else if (criterio === 'preferencia') {
+            if (a.ranking !== b.ranking) {
+                if (a.ranking === null || a.ranking === undefined) return 1;
+                if (b.ranking === null || b.ranking === undefined) return -1;
+                
+                return a.ranking - b.ranking;
+            }
+        }
+        return a.nome.localeCompare(b.nome);
+    });
+
+    renderizarCards(itensFiltrados);
 };
