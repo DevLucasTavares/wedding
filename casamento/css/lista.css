@@ -1,16 +1,204 @@
-#cabecalho-lista {
+/* TODO CSS EH PENSADO COMO MOBILE FIRST */
+
+#lista-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+}
+
+#cabecalho-lista {
+    padding-top: 90px; /* Espaço 80px p conteudo n sumir no header */
+    padding-bottom: 10px;
+    
+    display: flex;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin: 0;
+    overflow: visible;
+    
+    margin: 0 10px;
+}
+
+@media (min-width: 768px) { /* PC */
+    #cabecalho-lista {
+        padding-top: 80px;  /* Espaço 70px p conteudo n sumir no header */
+        padding-bottom: 10px;
+        margin: 0 200px;
+    }
+}
+
+#filtro-ordenacao-container {
+    display: flex; 
+    align-items: center; 
     gap: 10px;
 }
 
-#filtro-ordenacao {
-    max-width: 200px;
-    padding: 8px;
+#filtro-ordenacao-container select {
+    font-size: 1rem;
+    padding: 10px;
     border-radius: 8px;
-    border: 1px solid var(--detalhe);
+    border: 1px solid var(--primaria);
+    box-shadow: 0 4px 10px var(--sombra);
     background: white;
+    color: var(--secundaria);
     cursor: pointer;
+}
+
+.add-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    background: white;
+    border: 4px solid var(--primaria);
+    color: var(--secundaria);
+    border-radius: 50%;
+    font-size: 32px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px var(--sombra);
+    line-height: 1;
+}
+
+.ordem-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    padding: 12px;
+    background: white;
+    border: 4px solid var(--primaria);
+    color: var(--secundaria);
+    border-radius: 50%;
+    font-size: 32px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px var(--sombra);
+    line-height: 1;
+}
+
+.grid-itens {
+    margin: 0 10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 5px;
+}
+
+@media (min-width: 768px) { /* PC */
+    .grid-itens {
+        margin: 0 200px;
+        gap: 20px;
+    }
+}
+
+.card {
+    background: #FFFFFF;
+    border-radius: 28px;
+    padding: 16px;
+    display: flex;
+    gap: 20px;
+    border: 3.5px solid var(--primaria);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 160px;
+    align-items: center;
+    animation: fadeIn 0.5s ease-out forwards;
+    max-width: 500px;
+}
+
+/* CONTAINER DA IMAGEM NO CARD */
+.image-container {
+    width: 145px;
+    height: 145px;
+    flex-shrink: 0;
+    border-radius: 22px;
+    position: relative;
+    overflow: hidden;
+    background: whitesmoke; /* Fundo neutro suave */
+    border: 2px solid var(--primaria);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    transform: scale(1.05); 
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.card:not(.card-reservado):hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px var(--sombra);
+    border-color: var(--terciaria);
+}
+
+.card:not(.card-reservado):hover .card-image {
+    transform: scale(1.1);
+}
+
+.card-reservado {
+    opacity: 0.7;
+    /* background: whitesmoke; */
+    cursor: default;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.badge-reservado {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    background: var(--primaria);
+    color: var(--secundaria);
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 10px 0;
+    backdrop-filter: blur(4px);
+    border-top: 1px solid var(--sombra);
+    border-bottom: 1px solid var(--sombra);
+    z-index: 2;
+}
+
+/* CARD DA LISTA ------------------------------------------------------------ */
+.card-content { 
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: space-between;
+    align-self: stretch; 
+    padding: 5px 0;
+}
+
+.nome { 
+    margin: 0; 
+    font-size: 1.3rem; 
+    font-weight: 800; 
+    color: var(--secundaria); 
+    line-height: 1.2;
+}
+
+.descricao { 
+    font-size: 0.95rem; 
+    color: var(--secundaria); 
+    margin: 8px 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.valor { 
+    font-weight: 900; 
+    font-size: 1.5rem; 
+    color: var(--secundaria); 
+    margin-top: auto;
 }

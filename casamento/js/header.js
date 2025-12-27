@@ -1,17 +1,29 @@
-let lastScrollTop = 0;
-const header = document.getElementById('main-header');
+let lastScroll = 0;
 
-window.addEventListener("scroll", function() {
-    let st = window.pageYOffset || document.documentElement.scrollTop;
+window.addEventListener("scroll", () => {
+    const header = document.querySelector('.nav-container');
     
-    const headerElement = document.getElementById('main-header');
-    if (!headerElement) return;
+    if (!header) return;
 
-    if (st > lastScrollTop && st > 50) {
-        headerElement.classList.add('header-hidden');
+    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+
+    const naHome = (window.paginaAtual === 'home');
+
+    if (!naHome || currentScroll > 50) {
+        header.classList.add('header-scrolled');
     } else {
-        headerElement.classList.remove('header-hidden');
+        header.classList.remove('header-scrolled');
     }
-    
-    lastScrollTop = st;
-});
+
+    if (window.innerWidth <= 768) {
+        if (currentScroll > lastScroll && currentScroll > 80) {
+            header.classList.add('header-hidden');
+        } else {
+            header.classList.remove('header-hidden');
+        }
+    } else {
+        header.classList.remove('header-hidden');
+    }
+
+    lastScroll = currentScroll <= 0 ? 0 : currentScroll;
+}, { passive: true });

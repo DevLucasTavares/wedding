@@ -1,14 +1,19 @@
 :root {
-  --primaria: #B3E5FC;
-  --secundaria: #E1F5FE;
-  --acentuacao: #FFB7C5;
-  --detalhe: #FFF9C4;
-  --contraste: #546E7A;
-  --branco: #FFFFFF;
-  --bg: var(--secundaria);
-  --text: var(--contraste);
+  --primaria: #F1F0EC; /* Cloud Dancer */
+  --secundaria: #2B2C30; /* Stretch Limo */
+  --terciaria: #8A756A; /* Mountain Trail */
+  --sombra: rgba(139, 139, 139, 0.3);
+  --borda: #ebe4ca;
+
+  --bg-dark: #000000;
+  --bg-light: #F1F0EC;
+  
+  --contraste: #000000;  /* Texto e Ícones */
+  --branco: #FFFFFF;     /* Fundo de cards/filtros */
+  --acentuacao: #000000;
 }
 
+/* Reset pra QoL */
 * { 
   box-sizing: border-box; 
   margin: 0; 
@@ -16,15 +21,45 @@
 }
 
 body {
-  font-family: sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  font-family: 'Poppins', sans-serif;
+  background: black;
   overflow-x: hidden;
+  /* min-height: 100vh; */
+}
+ 
+body.bg-home {
+  background-image: url('../assets/pedido.JPG');
+  background-repeat: no-repeat;
+  background-size: cover ;
+  background-position: 48% top;
 }
 
-.container {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 0;
+body.bg-content {
+  background-image: url('../assets/floral.png');
+  background-repeat: repeat;
+  background-size: contain;
+  background-position: 1% top;
+  background-color: var(--primaria);
+}
+
+html {
+  font-size: 14px;
+}
+
+#main-app {
+    display: block !important;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+/* PC */
+@media (min-width: 768px) {
+  html {
+    font-size: 18px;
+  }
+
+  body.bg-home {
+    background-position: center 22%;
+  }
 }

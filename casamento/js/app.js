@@ -40,11 +40,26 @@ async function atualizarEstado(session) {
 async function carregarPagina() {
         const resHeader = await fetch('pages/header.html');
         const headerHtml = await resHeader.text();
-        document.getElementById('header-app').innerHTML = headerHtml;
+
+        const headerApp = document.getElementById('header-app');
+        headerApp.innerHTML = headerHtml;
+
+        const nav = headerApp.querySelector('.nav-container');
+        if (paginaAtual !== 'home' && nav) {
+            nav.classList.add('header-scrolled');
+        }
+
+        if (paginaAtual === 'home') {
+            document.body.classList.add('bg-home');
+            document.body.classList.remove('bg-content');
+        } else {
+            document.body.classList.remove('bg-home');
+            document.body.classList.add('bg-content');
+        }
 
         if (usuarioLogado) {
             const userDisplay = document.getElementById('user-display');
-            const userAvatar = document.querySelector('.user-avatar');
+            const userIcon = document.getElementById('user-icon-container'); // ID novo
             const loginTrigger = document.getElementById('login-trigger');
 
             if (userDisplay) {
@@ -52,11 +67,15 @@ async function carregarPagina() {
                 userDisplay.innerText = nomeCompleto.split(' ')[0];
             }
 
-            if (userAvatar) {
+            if (userIcon) {
                 const fotoUrl = usuarioLogado.user_metadata.avatar_url;
                 if (fotoUrl) {
-                    userAvatar.innerHTML = `<img src="${fotoUrl}" alt="User" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-                }
+                    userIcon.innerHTML = `<img src="${fotoUrl}" alt="User" class="user-avatar-img">`;
+                } 
+                // else {
+                //     userIcon.innerHTML = `<i data-lucide="user" class="user-avatar-img"></i>`;
+                //     lucide.createIcons(); 
+                // }
             }
             
             if (loginTrigger) {
@@ -71,6 +90,19 @@ async function carregarPagina() {
         if (paginaAtual === 'carta') caminho = 'pages/carta.html';
         if (paginaAtual === 'contato') caminho = 'pages/contato.html';
 
+        try {
+            const resPagina = await fetch(caminho);
+            const htmlPagina = await resPagina.text(); // A variável é criada aqui
+            
+            const mainApp = document.getElementById('main-app');
+            if (mainApp) {
+                mainApp.innerHTML = htmlPagina; // Injeta o HTML na tela
+                console.log("Página carregada com sucesso: " + paginaAtual);
+            }
+        } catch (erro) {
+            console.error("Erro ao carregar a página:", erro);
+        }
+
         const resPagina = await fetch(caminho);
         const htmlPagina = await resPagina.text();
         document.getElementById('main-app').innerHTML = htmlPagina;
@@ -84,7 +116,7 @@ async function carregarPagina() {
             if (pEmail) pEmail.innerText = usuarioLogado.email;
             if (pAvatar && usuarioLogado.user_metadata.avatar_url) {
                 pAvatar.innerHTML = `<img src="${usuarioLogado.user_metadata.avatar_url}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-            }
+            } else pAvatar.innerHTML = `<i data-lucide="user" style="color:var(--secundaria); width:100%; height:100%; object-fit:cover; border-radius:50%;"></i>`
         }
 
        if (paginaAtual === 'lista' && typeof carregarItens === 'function') {
@@ -110,44 +142,78 @@ async function usuarioJaPresenteou() {
 }
 
 window.navegar = async (pagina) => {
-    const overlay = document.getElementById('modal-overlay');
-    const modaisGerais = document.querySelectorAll('.modal, .modal-aviso');
-    modaisGerais.forEach(m => m.style.display = 'none');
-    if(overlay) overlay.style.display = 'none';
-    document.body.classList.remove('modal-open');
+    Modal.fechar();
 
     if (pagina === 'lista' && !usuarioLogado && !isAdmin) {
-        const modal = document.getElementById('modal-bloqueio-lista');
-        if (modal && overlay) {
-            modal.style.display = 'block';
-            overlay.style.display = 'block';
-            document.body.classList.add('modal-open');
-        }
+        Modal.abrir({
+            titulo: "Quase lá...",
+            mensagem: "Crie uma conta ou faça login para ver o que preparamos!",
+            textoBotao: "Entrar",
+            callback: () => realizarNavegacao('login')
+        });
         return;
     }
 
     if (pagina === 'carta') {
         const presenteou = await usuarioJaPresenteou();
+        
         if (!presenteou && !isAdmin) {
-            const modal = document.getElementById('modal-carta-spicy');
-            const msgEl = document.getElementById('carta-spicy-msg');
-            const btnCont = document.getElementById('carta-spicy-btn-container');
-            if (modal && overlay && msgEl && btnCont) {
-                msgEl.innerText = "Ela será desbloqueada após a compra de um item da nossa lista.";
-                if (!usuarioLogado) {
-                    btnCont.innerHTML = `<button class="submit" onclick="navegar('login')">Entrar</button>`;
-                } else {
-                    btnCont.innerHTML = `<button class="submit" onclick="navegar('lista')">Vamos!</button>`;
-                }
-                modal.style.display = 'block';
-                overlay.style.display = 'block';
-                document.body.classList.add('modal-open');
-            }
+            Modal.abrir({
+                titulo: "Uma mensagem surpresa!",
+                mensagem: "Ela será desbloqueada após a compra de um item da nossa lista.",
+                textoBotao: usuarioLogado ? "Ir para a Lista" : "Entrar",
+                callback: () => realizarNavegacao(usuarioLogado ? 'lista' : 'login')
+            });
             return;
         }
     }
-    paginaAtual = pagina;
-    carregarPagina();
+
+    realizarNavegacao(pagina);
 };
+
+function realizarNavegacao(pagina) {
+    paginaAtual = pagina;
+    carregarPagina(); // Sua função que renderiza o conteúdo no main-app
+}
+
+//     const overlay = document.getElementById('modal-overlay');
+//     const modaisGerais = document.querySelectorAll('.modal, .modal-aviso');
+//     modaisGerais.forEach(m => m.style.display = 'none');
+//     if(overlay) overlay.style.display = 'none';
+//     document.body.classList.remove('modal-open');
+
+//     if (pagina === 'lista' && !usuarioLogado && !isAdmin) {
+//         const modal = document.getElementById('modal-bloqueio-lista');
+//         if (modal && overlay) {
+//             modal.style.display = 'block';
+//             overlay.style.display = 'block';
+//             document.body.classList.add('modal-open');
+//         }
+//         return;
+//     }
+
+//     if (pagina === 'carta') {
+//         const presenteou = await usuarioJaPresenteou();
+//         if (!presenteou && !isAdmin) {
+//             const modal = document.getElementById('modal-carta-spicy');
+//             const msgEl = document.getElementById('carta-spicy-msg');
+//             const btnCont = document.getElementById('carta-spicy-btn-container');
+//             if (modal && overlay && msgEl && btnCont) {
+//                 msgEl.innerText = "Ela será desbloqueada após a compra de um item da nossa lista.";
+//                 if (!usuarioLogado) {
+//                     btnCont.innerHTML = `<button class="submit" onclick="navegar('login')">Entrar</button>`;
+//                 } else {
+//                     btnCont.innerHTML = `<button class="submit" onclick="navegar('lista')">Vamos!</button>`;
+//                 }
+//                 modal.style.display = 'block';
+//                 overlay.style.display = 'block';
+//                 document.body.classList.add('modal-open');
+//             }
+//             return;
+//         }
+//     }
+//     paginaAtual = pagina;
+//     carregarPagina();
+// };
 
 init();

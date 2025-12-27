@@ -1,102 +1,3 @@
-#cabecalho-lista {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-    height: 100px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: visible;
-    box-sizing: border-box !important;
-}
-
-.add-button {
-    all: unset !important;
-    box-sizing: border-box !important;
-    width: 55px !important;
-    height: 55px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background: #FFFFFF !important;
-    border: 4px solid var(--primaria) !important;
-    color: var(--primaria) !important;
-    border-radius: 50% !important;
-    font-size: 32px !important;
-    cursor: pointer !important;
-    box-shadow: 0 4px 10px rgba(179, 229, 252, 0.3) !important;
-    line-height: 1 !important;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-    animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-}
-
-.add-button:hover {
-    transform: scale(1.1) rotate(90deg) !important;
-    background: var(--primaria) !important;
-    color: #FFFFFF !important;
-}
-
-.grid-itens {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 0 16px 40px 16px;
-    width: 100%;
-}
-
-.card {
-    background: #FFFFFF;
-    border-radius: 28px;
-    padding: 16px;
-    display: flex;
-    gap: 20px;
-    border: 3.5px solid var(--primaria);
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    min-height: 160px;
-    align-items: center;
-    animation: fadeIn 0.5s ease-out forwards;
-}
-
-.card:not(.card-reservado):hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(179, 229, 252, 0.5);
-    border-color: var(--acentuacao);
-}
-
-/* CONTAINER DA IMAGEM NO CARD */
-.image-container {
-    width: 145px;
-    height: 145px;
-    flex-shrink: 0;
-    border-radius: 22px;
-    position: relative;
-    overflow: hidden;
-    background: #f9f9f9; /* Fundo neutro suave */
-    border: 2px solid rgba(179, 229, 252, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* AJUSTE DE ENQUADRAMENTO DA FOTO DO CARD */
-.card-image {
-    width: 100%;
-    height: 100%;
-    /* contain garante que o produto apareça todo, 
-       mas o scale(1.05) tira aquelas bordinhas brancas excessivas */
-    object-fit: contain; 
-    transform: scale(1.05); 
-    border-radius: 12px;
-    transition: transform 0.3s ease;
-}
-
-.card:hover .card-image {
-    transform: scale(1.1); /* Efeito de zoom suave no hover */
-}
-
 .image-mock { 
     width: 100%; 
     height: 100%; 
@@ -113,59 +14,6 @@
     height: 35px;
     color: var(--acentuacao);
     opacity: 0.5;
-}
-
-.badge-reservado {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--acentuacao);
-    font-size: 0.75rem;
-    font-weight: 800;
-    text-align: center;
-    padding: 10px 0;
-    backdrop-filter: blur(4px);
-    border-top: 1px solid rgba(179, 229, 252, 0.2);
-    border-bottom: 1px solid rgba(179, 229, 252, 0.2);
-    z-index: 2;
-}
-
-.card-content { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    justify-content: space-between;
-    align-self: stretch; 
-    padding: 5px 0;
-}
-
-.nome { 
-    margin: 0; 
-    font-size: 1.3rem; 
-    font-weight: 800; 
-    color: var(--contraste); 
-    line-height: 1.2;
-}
-
-.descricao { 
-    font-size: 0.95rem; 
-    color: #78909C; 
-    margin: 8px 0;
-    line-height: 1.4;
-    display: -webkit-box;
-    -webkit-line-clamp: 3; 
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.valor { 
-    font-weight: 900; 
-    font-size: 1.5rem; 
-    color: var(--acentuacao); 
-    margin-top: auto;
 }
 
 .card-interactions { 
@@ -198,28 +46,22 @@
     justify-content: center; 
 }
 
-.card-reservado {
-    opacity: 0.75;
-    background: #F8FDFF;
-    cursor: default;
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-/* #modal-novo-presente {
+/* 
+#modal-novo-presente {
     padding: 30px !important;
     border-radius: 30px !important;
     max-height: 90vh;
     overflow-y: auto;
-} */
-
+} 
+*/
 #modal-novo-presente {
-    position: absolute !important; /* Muda de fixed para absolute */
-    top: 200px !important;         /* Distância fixa do topo do elemento pai */
+    position: absolute !important;
+    top: 200px !important;
     left: 50% !important;
-    transform: translateX(-50%) !important; /* Centraliza apenas horizontalmente */
-    display: none;                 /* O JS vai mudar para block */
+    transform: translateX(-50%) !important;
+    display: none;
     z-index: 9999;
+    background: var(--primaria);
 }
 
 .form-novo-item {

@@ -4,16 +4,19 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>L&L 26-07-2026</title>
-    
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23546E7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'></path></svg>">
 
-    <link rel="stylesheet" href="css/style.css">      
-    <link rel="stylesheet" href="css/animations.css"> 
-    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/lista.css">
+
+    <link rel="stylesheet" href="css/animations.css"> 
     <link rel="stylesheet" href="css/card.css">       
     <link rel="stylesheet" href="css/auth.css">       
-    <link rel="stylesheet" href="css/modais.css">     
+    <link rel="stylesheet" href="css/modal.css">
     <link rel="stylesheet" href="css/itemModal.css">
     <link rel="stylesheet" href="css/carta.css">
     <link rel="stylesheet" href="css/contato.css">
@@ -26,17 +29,18 @@
     <script src="js/auth.js"></script>
     <script src="js/header.js"></script>
     <script src="js/lista.js"></script>
+    <script src="js/modais.js"></script>
 
     <script src="js/app.js" defer></script>
 </head>
 <body> 
     <div id="header-app"></div>
 
-    <main id="main-app" style="padding-top: 80px;"></main>
+    <main id="main-app"></main>
 
-    <div class="overlay" id="modal-overlay" style="display: none;"></div>
+    <div class="overlay" id="modal-overlay" onclick="Modal.fechar()" style="display: none;"></div>
 
-    <div id="modal-detalhes-item" style="display: none;"></div>
+    <div id="modal-detalhes-item" class="mdi-container" style="display: none;"></div>
 
 
     <div id="modal-confirmacao" class="modal" style="display: none;">
@@ -48,24 +52,6 @@
             </div>
         </div>
     </div>
-
-    <!-- <div id="modal-aviso-login" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2>Atenção 💗</h2>
-            <p>Você precisa estar logado para reservar um presente.</p>
-            <button onclick="navegar('login')">Fazer Login</button>
-            <button onclick="fecharTodosModais()">Voltar</button>
-        </div>
-    </div> -->
-
-    <!-- <div id="modal-bloqueio-lista" class="modal" style="display: none;"></div>
-    <div id="modal-carta-spicy" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2 id="carta-spicy-titulo">Página Bloqueada</h2>
-            <p id="carta-spicy-msg"></p>
-            <div id="carta-spicy-btn-container"></div>
-        </div>
-    </div> -->
 
     <script>
         setInterval(() => { 

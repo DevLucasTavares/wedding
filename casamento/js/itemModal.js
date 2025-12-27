@@ -33,7 +33,8 @@ window.abrirModalDetalhes = async (id) => {
     }
     
     compradorAtual = null;
-    if (isAdmin && item.id_usuario) {
+    const isEscolhido = !!item.id_usuario && item.id_usuario == usuarioLogado.id;
+    if (item.id_usuario && (isAdmin || isEscolhido)) {
         const { data: perfil } = await supabase
             .from('perfis')
             .select('nome, email, telefone')
@@ -122,95 +123,122 @@ function renderizarConteudoModal() {
     const item = itemAtual;
     const comprador = compradorAtual;
 
+    if (isAdmin)
+    {
+        modal.classList.add('isAdmin');
+    }
+
     let fotoCentro = estadoFotos[0] || null;
     let fotoDir = estadoFotos[1] || null;
     let fotoEsq = estadoFotos[2] || null;
 
-    modal.innerHTML = `
+    const estaRiscado = itemAtual.id_usuario_pendente === null;
 
-        <button class="close" onclick="fecharTodosModais()" ${estaProcessando ? 'disabled' : ''}>
+    modal.innerHTML = `
+        <button class="mdi-close" onclick="Modal.fechar()" ${estaProcessando ? 'disabled' : ''}>
             <i data-lucide="x"></i>
         </button>
 
         <input type="file" id="input-foto-modal" style="display:none" accept="image/*" multiple 
         onchange="adicionarFotoNoModal(this)">
         
-        <div class="modal-layout ${estaProcessando ? 'processando' : ''}">
+        <div class="mdi-layout ${estaProcessando ? 'processando' : ''}">
 
-            <div class="carrossel-container">
-                <div class="carrossel-wrapper">
+            <div class="mdi-carrosel-container">
+                <div class="mdi-carrossel-wrapper">
 
                     ${(fotoEsq || isAdmin) ? `
-                        <div class="foto-lateral esq" 
+                        <div class="mdi-foto-esq" 
                             ${fotoEsq && fotoEsq.url ? `style="background-image: url('${fotoEsq.url}')"` : ''} 
                             onclick="girarCarrossel('esq')">
-                            ${(!fotoEsq || !fotoEsq.url) ? '<i data-lucide="gift" class="mock-icon"></i>' : ''}
+                            ${(!fotoEsq || !fotoEsq.url) ? '<i data-lucide="gift" class="mdi-foto-mock"></i>' : ''}
                         </div>` : ''}
                         
-                    <div class="foto-central ${isAdmin ? 'admin-edit' : ''}" 
+                    <div class="mdi-foto-meio" 
                         ${fotoCentro && fotoCentro.url ? `style="background-image: url('${fotoCentro.url}')"` : ''}
                         onclick="acaoFotoCentral()">
-                        ${(!fotoCentro || !fotoCentro.url) ? '<i data-lucide="gift" class="mock-icon"></i>' : ''}
+                        ${(!fotoCentro || !fotoCentro.url) ? '<i data-lucide="gift" class="mdi-foto-mock"></i>' : ''}
                         ${isAdmin ? `
-                            <div class="overlay-foto">
+                            <div class="mdi-foto-overlay">
                                 <i data-lucide="${(fotoCentro && !fotoCentro.isMock) ? 'trash-2' : 'plus'}"></i>
                             </div>` : ''}
                     </div>
 
                     ${(fotoDir || isAdmin) ? `
-                        <div class="foto-lateral dir" 
+                        <div class="mdi-foto-dir" 
                             ${fotoDir && fotoDir.url ? `style="background-image: url('${fotoDir.url}')"` : ''} 
                             onclick="girarCarrossel('dir')">
-                            ${(!fotoDir || !fotoDir.url) ? '<i data-lucide="gift" class="mock-icon"></i>' : ''}
+                            ${(!fotoDir || !fotoDir.url) ? '<i data-lucide="gift" class="mdi-foto-mock"></i>' : ''}
                         </div>` : ''}
 
                 </div>
             </div>
 
-            <div class="modal-col-direita">
+            <div class="mdi-coluna">
                 <div style="text-align: center;">
                     ${isAdmin ? 
-                        `<b>Nome:</b>
-                        <input type="text" id="edit-nome" class="input-titulo" value="${item.nome}">`
+                        `<div>
+                            <b>Nome:</b>
+                            <input class="mdi-input-texto" type="text" id="edit-nome" value="${item.nome}">
+                        </div>`
                         : 
-                        `<h2 class="modal-titulo">${item.nome}</h2>`
+                        `<h2 class="mdi-display-texto">${item.nome}</h2>`
                     }
 
                     <div class="campo-valor-row">
-                        <i data-lucide="dollar-sign"></i>
                         ${isAdmin ? 
                             `<b>Valor:</b>
-                            <input type="number" id="edit-valor" value="${item.valor}">`
+                            <input type="number" id="edit-valor" class="mdi-input-texto" value="${item.valor}">`
                             : 
-                            `<span>${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>`
+                            `<span>R$${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>`
                         }
                     </div>
 
-                    ${isAdmin?
-                        `<b>Ranking:</b>
-                        <input type="text" id="edit-ranking" class="" value="${item.ranking}">`
+                    ${item.id_usuario && (isAdmin || comprador) ? 
+                        `<div class="mdi-container-reserva" id="container-reserva">
+                            <div id="dados-reservista" class="${estaRiscado ? 'texto-riscado' : ''}">
+                                <p><strong>
+                                ${item.comprado_em != null ?
+                                    `Comprado por:`
+                                    :
+                                    `Reservado por:`
+                                }
+                                </strong></p> 
+                                <div>
+                                    <p>${comprador.nome}</p>
+                                    ${isAdmin?
+                                    `<p>${comprador.telefone || comprador.email}</p>`
+                                    : ''
+                                    }
+                                </div>
+                            </div>
+                            ${item.comprado_em == null || isAdmin ?
+                                `<button type="button" 
+                                class="mdi-botao-acao ${estaRiscado ? 'status-reverter' : 'status-remover'}" 
+                                id="btn-toggle-reserva" 
+                                onclick="alternarStatusReserva()">
+                                    <i data-lucide="${estaRiscado ? 'rotate-ccw' : 'ban'}"></i>
+                                </button>`
+                                : ''
+                            }
+                        </div>` 
                         : ''
                     }
 
+                    ${isAdmin ?
+                        `<div>
+                            <b>Ranking:</b>
+                            <input type="text" id="edit-ranking" class="mdi-input-texto" value="${item.ranking}">
+                        </div>`
+                        : ''
+                    }
                 </div>
 
-                ${isAdmin && comprador ? 
-                    `<div class="info-comprador" id="container-reserva">
-                        <div id="dados-reservista">
-                            <p><strong>Reservado por:</strong> ${comprador.nome}</p>
-                            <p>${comprador.telefone || comprador.email}</p>
-                        </div>
-                        <button type="button" id="btn-toggle-reserva" onclick="alternarStatusReserva()">
-                            Remover reserva
-                        </button>
-                    </div>` 
-                    : ''
-                }
-
-                ${isAdmin 
-                    ? `<div class="campo-admin">
-                            <b>Area:</b>
-                            <select id="edit-area" class="modal-select">
+                <div class="mdi-campos-detalhes">
+                    ${isAdmin ? 
+                        `<div>
+                            <b>Área:</b>
+                            <select id="edit-area" class="">
                                 <option value="1" ${item.area == 1 ? 'selected' : ''}>Banheiro</option>
                                 <option value="2" ${item.area == 2 ? 'selected' : ''}>Cozinha</option>
                                 <option value="3" ${item.area == 3 ? 'selected' : ''}>Eletrodomésticos</option>
@@ -218,40 +246,53 @@ function renderizarConteudoModal() {
                                 <option value="5" ${item.area == 5 ? 'selected' : ''}>Área de Serviço</option>
                                 <option value="6" ${item.area == 6 ? 'selected' : ''}>Outros</option>
                             </select>
+                        </div>
+                        <div>
                             <b>Descrição:</b>
-                            <textarea id="edit-desc">${item.descricao || ''}</textarea>
+                            <textarea id="edit-desc" class="mdi-input-texto">${item.descricao || ''}</textarea>
+                        </div>
+                        <div>
                             <b>Link:</b>
-                            <input type="text" id="edit-link" value="${item.link_compra || ''}" placeholder="Link de compra">
+                            <input type="text" id="edit-link" class="mdi-input-texto" value="${item.link_compra || ''}" placeholder="Link de compra">
                         </div>`
-                    : `<p class="modal-descricao">${item.descricao || ''}</p>`}
-
-                <div class="modal-acoes-row">
-
-                    ${item.link_compra !== 'https://lucascarrarini.com/casamento/' ? 
-                        `<a href="${item.link_compra}" 
-                        target="_blank" 
-                        class="btn-acao-mini btn-loja" 
-                        onclick="iniciarFluxoConfirmacao('${item.id}')">
-                            <i data-lucide="shopping-cart"></i> Loja    
-                        </a>` 
-                        : ''
-                    }
-
-                    <button class="btn-acao-mini btn-pix-mini" onclick="exibirAviso('PIX 🤍', 'Chave PIX: seu@email.com')">
-                        <i data-lucide="qr-code"></i> PIX
-                    </button>
-
-                    ${isAdmin ? `
-                        <button class="btn-acao-mini btn-save-mini" onclick="salvarEdicao('${item.id}')" id="btn-salvar-modal">
-                            <i data-lucide="save"></i> Salvar
-                        </button>
-                        <button class="btn-acao-mini btn-delete-mini" onclick="removerItem('${item.id}')">
-                            <i data-lucide="trash-2"></i> Apagar
-                        </button>` 
-                        : ''
-                    }
+                    : `<p class="mdi-display-descricao">${item.descricao || ''}</p>`}
                 </div>
 
+                <div class="mdi-acoes-usuario">
+                    ${isAdmin ?
+                    `<div class="salvar">
+                        <button class="mdi-botao-acao" onclick="salvarEdicao('${item.id}')" id="btn-salvar-modal">
+                            <i data-lucide="save"></i>
+                        </button>
+                    </div>
+                    <div class="excluir">
+                        <button class="mdi-botao-acao" onclick="apagarItem('${item.id}')" id="btn-excluir-modal">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>`
+                    : (item.id_usuario === null ? 
+                        `<div class="reservar">
+                            <button class="mdi-botao-acao" 
+                            onclick="iniciarFluxoReserva('${item.id}')">
+                                Reservar
+                            </button>
+                        </div>` 
+                        : 
+                        `${item.ranking !== 9999 ? 
+                            `<div class="loja">
+                                <a href="${item.link_compra}" target="_blank" class="mdi-botao-acao" onclick="iniciarFluxoConfirmacao('${item.id}')">
+                                    <i data-lucide="shopping-cart"></i>    
+                                </a>
+                            </div>` : ''
+                        }
+                        <div class="pix">
+                            <button class="mdi-botao-acao" onclick="renderizarEtapaPix()">
+                                PIX
+                            </button>
+                        </div>`
+                        )
+                    }
+                </div>
             </div>
         </div>
     `;
@@ -260,32 +301,54 @@ function renderizarConteudoModal() {
 }
 
 window.alternarStatusReserva = () => {
-    const container = document.getElementById('dados-reservista');
-    const btn = document.getElementById('btn-toggle-reserva');
-    
-    if (!container.classList.contains('texto-riscado')) {
-        container.style.textDecoration = 'line-through';
-        container.style.opacity = '0.5';
-        container.classList.add('texto-riscado');
-        btn.innerText = 'Reverter reserva';
+    const isEscolhido = !!itemAtual.id_usuario && itemAtual.id_usuario == usuarioLogado.id;
+    const isRiscado = itemAtual.hasOwnProperty('id_usuario_pendente') && itemAtual.id_usuario_pendente === null;
+    if (!isAdmin && isEscolhido && !isRiscado) {
+        iniciarFluxoCancelamento(itemAtual.id)
+        return;
+    }
+
+    if (!isRiscado) {
         itemAtual.id_usuario_pendente = null;
     } else {
-        container.style.textDecoration = 'none';
-        container.style.opacity = '1';
-        container.classList.remove('texto-riscado');
-        btn.innerText = 'Remover reserva';
         itemAtual.id_usuario_pendente = itemAtual.id_usuario;
     }
+    renderizarConteudoModal();
+};
+
+window.apagarItem = async (id) => {
+    if (estaProcessando) return;
+    estaProcessando = true;
+
+    const btnExcluir = document.getElementById('btn-excluir-modal');
+    if (btnExcluir) btnExcluir.innerHTML = "Processando..."
+
+    try {
+        await supabase
+            .from('itens')
+            .delete()
+            .eq('id', id);
+
+        exibirAviso('Sucesso!', 'Item ecluído com sucesso!');
+        Modal.fechar();
+        carregarItens();
+
+        } catch (err) {
+            console.error(err);
+            exibirAviso('Erro', 'Erro ao excluir o item.');
+
+        } finally {
+            estaProcessando = false;
+
+        }
 };
 
 window.salvarEdicao = async (id) => {
     if (estaProcessando) return;
-
     estaProcessando = true;
     const btnSalvar = document.getElementById('btn-salvar-modal');
 
     if(btnSalvar) btnSalvar.innerHTML = "Processando...";
-    
     try {
         const nome = document.getElementById('edit-nome').value;
         const valor = document.getElementById('edit-valor').value;
@@ -341,13 +404,15 @@ window.salvarEdicao = async (id) => {
                 link_compra: link,
                 ranking: parseFloat(ranking),
                 id_usuario: itemAtual.hasOwnProperty('id_usuario_pendente') ? 
-                    itemAtual.id_usuario_pendente : itemAtual.id_usuario
+                    itemAtual.id_usuario_pendente : itemAtual.id_usuario,
+                comprado_em: itemAtual.hasOwnProperty('id_usuario_pendente') ?
+                    null : itemAtual.comprado_em
             })
             .eq('id', id);
 
         if (error) throw error;
         exibirAviso('Sucesso! ✨', 'Item atualizado com sucesso!');
-        fecharTodosModais();
+        Modal.fechar();
         carregarItens();
 
     } catch (err) {
@@ -372,7 +437,47 @@ function getAreaNome(id) {
     return areas[id] || '';
 }
 
-// Inicia o fluxo
+// Inicia o fluxo de reserva
+function iniciarFluxoReserva(idItem) {
+    const modal = document.getElementById('modal-detalhes-item');
+
+    modal.innerHTML = `
+        <div class="modal-fluxo-confirmacao">
+            <h3>Obaa! Que alegria!</h3>
+            <p>Estamos muito felizes por pensar na gente com tanto carinho.</p>
+            <p>Vamos seguir com a reserva desse item pra você nos presentear.</p>
+            <div class="modal-acoes-fluxo">
+                <button class="btn-confirmar" onclick="renderizarEtapaConfirmacaoReserva('${idItem}')">Vamos!</button>
+                <button class="btn-cancelar" onclick="Modal.fechar()">Mudei de ideia</button>
+            </div>
+        </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
+function renderizarEtapaConfirmacaoReserva(idItem) {
+    const modal = document.getElementById('modal-detalhes-item');
+
+    // ToDo: Add mensagem que pode ver os itens reservados no Perfil
+    modal.innerHTML = `
+        <div class="modal-fluxo-confirmacao">
+            <h3>Só pra confirmar</h3>
+            <p>Esse item ficará reservado exclusivamente pra você!</p>
+            <p>A partir de agora, no próprio item vai aparecer o link do site pra compra ou a opção de envio via PIX.</p>
+            <p>Como são muitas coisas pra organizar, estamos usando essa lista virtual pra facilitar tudo.</p>
+            <p>E pode ficar tranquilo, se mudar de ideia é só acessar o item novamente e cancelar a reserva.</p>
+            <div class="modal-acoes-fluxo">
+                <button class="btn-confirmar" onclick="confirmarReservaSucesso('${idItem}')">Tudo certo</button>
+                <button class="btn-cancelar" onclick="Modal.fechar()">Mudei de ideia</button>
+            </div>
+        </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
+// Inicia o fluxo de confirmação de compra
 window.iniciarFluxoConfirmacao = (idItem) => {
     setTimeout(() => {
         renderizarEtapaConfirmacao(idItem);
@@ -388,6 +493,22 @@ function renderizarEtapaConfirmacao(idItem) {
             <p>Sua confirmação ajuda a manter nossa lista atualizada!</p>
             <div class="modal-acoes-fluxo">
                 <button class="btn-confirmar" onclick="confirmarCompraSucesso('${idItem}')">Sim, comprei!</button>
+                <button class="btn-cancelar" onclick="renderizarEtapaNegada('${idItem}')">Não...</button>
+            </div>
+        </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
+window.renderizarEtapaNegada = (idItem) => {
+    const modal = document.getElementById('modal-detalhes-item');
+    
+    modal.innerHTML = `
+        <div class="modal-fluxo-confirmacao">
+            <h3>Ocorreu algum problema?</h3>
+            <div class="modal-acoes-fluxo">
+                <button class="btn-confirmar" onclick="Modal.fechar()">Só não comprei ainda</button>
                 <button class="btn-cancelar" onclick="renderizarEtapaMotivoFalha('${idItem}')">Não deu certo</button>
             </div>
         </div>
@@ -401,7 +522,7 @@ window.renderizarEtapaMotivoFalha = (idItem) => {
     
     modal.innerHTML = `
         <div class="modal-fluxo-confirmacao">
-            <h3>Mas por que não deu certo? 😕</h3>
+            <h3>Mas por que não deu certo?</h3>
             <div class="modal-acoes-fluxo">
                 <button class="btn-falha" onclick="tratarLinkInvalido('${idItem}')">Link inválido</button>
                 <button class="btn-falha" onclick="renderizarEtapaPix()">Desisti</button>
@@ -417,10 +538,56 @@ window.renderizarEtapaPix = () => {
     
     modal.innerHTML = `
         <div class="modal-fluxo-confirmacao">
-            <h3>Que pena... quer enviar um PIX com esse valor para o casal? 🤍</h3>
+            <h3>Quer enviar um PIX com esse valor para o casal?</h3>
             <div class="modal-acoes-fluxo">
                 <button class="btn-confirmar" onclick="navegar('contato')">Sim</button>
-                <button class="btn-cancelar" onclick="fecharTodosModais()">Não</button>
+                <button class="btn-cancelar" onclick="Modal.fechar()">Não</button>
+            </div>
+        </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
+window.confirmarReservaSucesso = async (idItem) => {
+    const btn = event.target;
+    const textoOriginal = btn.innerText;
+    btn.innerText = "Processando...";
+    btn.disabled = true;
+
+    if (usuarioLogado) {
+        const { error } = await supabase
+            .from('itens')
+            .update({ id_usuario: usuarioLogado.id })
+            .eq('id', idItem);
+
+        if (error) {
+            console.error("Erro ao vincular compra:", error);
+            alert("Erro ao reservar. Tente novamente.");
+            btn.innerText = textoOriginal;
+            btn.disabled = false;
+            return;
+        }
+        
+        if (typeof carregarItens === 'function') carregarItens();
+        direcionarParaItem(idItem);
+        // Modal.fechar(); 
+        
+    } else {
+        navegar('login');
+    }
+};
+
+window.direcionarParaItem = (idItem) => {
+    const modal = document.getElementById('modal-detalhes-item');
+    
+    modal.innerHTML = `
+        <div class="modal-fluxo-confirmacao">
+            <h3>Tudo certo!</h3>
+            <p>Item reservado e já disponível para presentear, basta acessar ele novamente.</p>
+            <div class="modal-acoes-fluxo">
+                <button class="btn-confirmar" onclick="abrirModalDetalhes('${idItem}')">Acessar</button>
+                <button class="btn-cancelar" onclick="Modal.fechar()">Voltar</button>
             </div>
         </div>
     `;
@@ -437,9 +604,10 @@ window.confirmarCompraSucesso = async (idItem) => {
     if (usuarioLogado) {
         const { error } = await supabase
             .from('itens')
-            .update({ id_usuario: usuarioLogado.id })
-            .eq('id', idItem);
-
+            .update({ comprado_em: new Date().toISOString() })
+            .eq('id', idItem)
+            .eq('id_usuario', usuarioLogado.id) // Segurança: garante que quem reservou é quem está pagando
+        
         if (error) {
             console.error("Erro ao vincular compra:", error);
             alert("Erro ao confirmar compra. Tente novamente.");
@@ -448,26 +616,72 @@ window.confirmarCompraSucesso = async (idItem) => {
             return;
         }
         
-        fecharTodosModais(); 
-        if (typeof carregarItens === 'function') carregarItens();
+        if (window.exibirAviso) exibirAviso('Obrigadoo!!!', 'Sua contribuição foi registrada.');
+        // Modal.fechar(); 
+        // if (typeof carregarItens === 'function') carregarItens();
         
-        if (window.exibirAviso) exibirAviso('Obrigado! ❤️', 'Sua contribuição foi registrada.');
     } else {
         navegar('login');
     }
-};
-
+}
 
 window.tratarLinkInvalido = async (idItem) => {
     const { error } = await supabase
         .from('itens')
         .update({ 
-            ranking: 9999, 
-            link_compra: 'https://lucascarrarini.com/casamento/' 
+            ranking: 9999
         })
         .eq('id', idItem);
 
     if (error) console.error("Erro ao atualizar link inválido:", error);
     
     renderizarEtapaPix();
+};
+
+// Inicia o fluxo de cancelamento da reserva
+function iniciarFluxoCancelamento(idItem) {
+    const modal = document.getElementById('modal-detalhes-item');
+
+    modal.innerHTML = `
+        <div class="modal-fluxo-confirmacao">
+            <h3>Tem certeza que quer cancelar a reserva?</h3>
+            <p>Sabemos que imprevistos acontecem e está tudo bem.</p>
+            <p>Mas caso tenha clicado por engano, tem como voltar!</p>
+            <div class="modal-acoes-fluxo">
+                <button class="btn-confirmar" onclick="cancelaReserva('${idItem}')">Cancelar Reserva</button>
+                <button class="btn-cancelar" onclick="Modal.fechar()">Voltar</button>
+            </div>
+        </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+}
+
+window.cancelaReserva = async (idItem) => {
+    const btn = event.target;
+    const textoOriginal = btn.innerText;
+    btn.innerText = "Processando...";
+    btn.disabled = true;
+
+    if (usuarioLogado) {
+        const { error } = await supabase
+            .from('itens')
+            .update({ id_usuario: null })
+            .eq('id', idItem);
+
+        if (error) {
+            console.error("Erro ao cancelar reserva:", error);
+            alert("Erro. Tente novamente.");
+            btn.innerText = textoOriginal;
+            btn.disabled = false;
+            return;
+        }
+        
+        Modal.fechar(); 
+        if (typeof carregarItens === 'function') carregarItens();
+        
+        direcionarParaItem(idItem);
+    } else {
+        navegar('login');
+    }
 };
