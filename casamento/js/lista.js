@@ -508,6 +508,8 @@ window.ordenarItens = () => {
     const criterio = (elementoCriterio && elementoCriterio.value) || 'preferencia';
     const categoriaSelecionada = (elementoCategoria && elementoCategoria.value) || 'todas';
 
+    const idLogado = usuarioLogado.id;
+
     let itensFiltrados = [...itensLocais];
 
     if (criterio === 'area' && categoriaSelecionada !== 'todas') {
@@ -516,10 +518,17 @@ window.ordenarItens = () => {
 
     itensFiltrados.sort((a, b) => {
 
-        const aTemUsuario = a.id_usuario !== null && a.id_usuario !== undefined;
-        const bTemUsuario = b.id_usuario !== null && b.id_usuario !== undefined;
-        if (aTemUsuario && !bTemUsuario) return 1;
-        if (!aTemUsuario && bTemUsuario) return -1;
+        const souEuA = idLogado && a.id_usuario === idLogado;
+        const souEuB = idLogado && b.id_usuario === idLogado;
+
+        if (souEuA && !souEuB) return -1;
+        if (!souEuA && souEuB) return 1;
+
+        const temOutroUsuarioA = a.id_usuario !== null && a.id_usuario !== undefined && !souEuA;
+        const temOutroUsuarioB = b.id_usuario !== null && b.id_usuario !== undefined && !souEuB;
+
+        if (temOutroUsuarioA && !temOutroUsuarioB) return 1;
+        if (!temOutroUsuarioA && temOutroUsuarioB) return -1;
 
         if (criterio === 'valor') {
             return direcaoValor === 'asc' ? a.valor - b.valor : b.valor - a.valor;
@@ -529,14 +538,14 @@ window.ordenarItens = () => {
         } 
         else if (criterio === 'preferencia') {
             if (a.ranking !== b.ranking) {
-                if (a.ranking === null || a.ranking === undefined) return 1;
-                if (b.ranking === null || b.ranking === undefined) return -1;
-                
+                if (a.ranking == null) return 1;
+                if (b.ranking == null) return -1;
                 return a.ranking - b.ranking;
             }
         }
         const rankA = a.ranking ?? Infinity;
         const rankB = b.ranking ?? Infinity;
+        
         if (rankA !== rankB) {
             return rankA - rankB;
         }

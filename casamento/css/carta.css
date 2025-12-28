@@ -5,9 +5,19 @@
     align-items: center;
     min-height: calc(100vh - 80px); 
     text-align: center;
-    width: 100%;
+    /* width: 100%; */
+
+    padding: 5% 27% 0 27%;
     
     animation: cartaPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@media (max-width: 768px) {
+  .carta-wrapper {
+    padding: 10%;
+    padding-top: 20%;
+    font-size: 1.08rem;
+  }
 }
 
 .carta-wrapper h1 {
