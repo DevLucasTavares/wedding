@@ -25,6 +25,10 @@ function renderizarCards(itens) {
                     <option value="preferencia">Preferência dos Noivos</option>
                     <option value="valor">Valor</option>
                     <option value="area">Área</option>
+                    ${isAdmin ? `
+                    <option value="reservados">Reservados</option>
+                    <option value="comprados">Comprados</option>
+                ` : ''}
                 </select>
                 
                 <div id="controles-extras" style="display: flex; align-items: center;">
@@ -514,6 +518,14 @@ window.ordenarItens = () => {
 
     if (criterio === 'area' && categoriaSelecionada !== 'todas') {
         itensFiltrados = itensFiltrados.filter(item => item.area == categoriaSelecionada);
+    }
+
+    if (criterio === 'reservados') {
+        itensFiltrados = itensFiltrados.filter(item => item.id_usuario && !item.comprado_em);
+    }
+
+    if (criterio === 'comprados') {
+        itensFiltrados = itensFiltrados.filter(item => item.id_usuario && item.comprado_em);
     }
 
     itensFiltrados.sort((a, b) => {

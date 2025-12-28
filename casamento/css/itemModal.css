@@ -31,6 +31,13 @@
   /* Ótima altura para usuário admin */
   /* max-height: 95%; */
 }
+.mdi-container h3 {
+    padding-bottom: 5px;
+}
+
+.mdi-container p {
+    padding: 2px 0;
+}
 
 .mdi-container::-webkit-scrollbar {
   display: none;
@@ -311,10 +318,10 @@
 }
 
 #btn-toggle-reserva {
-    flex: none;      /* Impede que ele estique */
-    width: 48px;     /* Mesma medida do height da base */
-    padding: 0;      /* Remove o padding lateral para o ícone centralizar */
-    border-radius: 15px; /* Deixa redondo */
+    flex: none;
+    width: 60px;
+    padding: 0;
+    /* border-radius: 15px; */
 }
 
 /* Estado: Tirar Reserva (Vermelho) */
@@ -347,13 +354,16 @@
     flex-direction: row;
     flex-wrap: nowrap;
     gap: 50px;
-    padding: 10px;
+    padding: 10px 10px 10px 10px;
 }
 .modal-acoes-fluxo button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background: var(--secundaria);
     border: none;
-    padding: 16px 20px;
-    margin-top: 20px;
+    padding: 20px 25px;
+    /* margin-top: 20px; */
     font-weight: 700;
     color: var(--primaria);
     cursor: pointer;

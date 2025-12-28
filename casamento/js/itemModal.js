@@ -264,26 +264,29 @@ function renderizarConteudoModal() {
                     : (item.id_usuario === null ? 
                         `<div class="reservar">
                             <button class="mdi-botao-acao" 
-                            onclick="iniciarFluxoReserva('${item}')">
+                            onclick="iniciarFluxoReserva('${item.id}')">
                                 Reservar
                             </button>
                         </div>` 
                         : 
-                        `${item.ranking !== 9999 ? 
+                        `${item.ranking !== 9999 && !item.comprado_em ? 
                             `<div class="loja">
-                                <a href="${item.link_compra}" target="_blank" class="mdi-botao-acao" onclick="iniciarFluxoConfirmacao('${item}')">
+                                <a href="${item.link_compra}" target="_blank" class="mdi-botao-acao" onclick="iniciarFluxoConfirmacao('${item.id}', '${item.valor}')">
                                     <i data-lucide="shopping-cart"></i>    
                                 </a>
                             </div>` : ''
                         }
-                        <div class="pix">
-                            <button class="mdi-botao-acao" onclick="renderizarEtapaPix('${item}')">
+                        ${!item.comprado_em ?
+                        `<div class="pix">
+                            <button class="mdi-botao-acao" onclick="renderizarEtapaPix('${item.id}', '${item.valor}')">
                                 PIX
                             </button>
                         </div>`
+                        : ''
+                        }`
                     )
                 }
-                ${item.id_usuario && (isAdmin || item.id_usuario == usuarioLogado.id) ?
+                ${item.id_usuario && (isAdmin || (!item.comprado_em && (item.id_usuario == usuarioLogado.id))) ?
                     `<button type="button" 
                         class="mdi-botao-acao ${estaRiscado ? 'status-reverter' : 'status-remover'}" 
                         id="btn-toggle-reserva" 
@@ -443,11 +446,12 @@ function iniciarFluxoReserva(idItem) {
 
     modal.innerHTML = `
         <div class="modal-fluxo-confirmacao">
-            <h3>Obaa! Que alegria!</h3>
+            <h3>Esse item ficará reservado exclusivamente para você!</h3>
             <p>Estamos muito felizes por pensar na gente com tanto carinho.</p>
-            <p>Vamos seguir com a reserva desse item pra você nos presentear.</p>
+            <p>A partir de agora, ao clicar no próprio item irá aparecer o link do site para compra.</p>
+            <p>Pode ficar tranquilo, se mudar de ideia é só acessar o item novamente e cancelar a reserva.</p>
             <div class="modal-acoes-fluxo">
-                <button class="btn-confirmar" onclick="renderizarEtapaConfirmacaoReserva('${idItem}')">Vamos!</button>
+                <button class="btn-confirmar" onclick="confirmarReservaSucesso('${idItem}')">Acessar o item</button>
                 <button class="btn-cancelar" onclick="Modal.fechar()">Mudei de ideia</button>
             </div>
         </div>
@@ -462,11 +466,11 @@ function renderizarEtapaConfirmacaoReserva(idItem) {
     // ToDo: Add mensagem que pode ver os itens reservados no Perfil
     modal.innerHTML = `
         <div class="modal-fluxo-confirmacao">
-            <h3>Esse item ficará reservado exclusivamente pra você!</h3>
+            <h3>Esse item ficará reservado exclusivamente para você!</h3>
             <p>A partir de agora, ao clicar no próprio item irá aparecer o link do site para compra.</p>
             <p>Pode ficar tranquilo, se mudar de ideia é só acessar o item novamente e cancelar a reserva.</p>
             <div class="modal-acoes-fluxo">
-                <button class="btn-confirmar" onclick="confirmarReservaSucesso('${idItem}')">Tudo certo</button>
+                <button class="btn-confirmar" onclick="confirmarReservaSucesso('${idItem}')">Acessar o item</button>
                 <button class="btn-cancelar" onclick="Modal.fechar()">Mudei de ideia</button>
             </div>
         </div>
@@ -476,13 +480,13 @@ function renderizarEtapaConfirmacaoReserva(idItem) {
 }
 
 // Inicia o fluxo de confirmação de compra
-window.iniciarFluxoConfirmacao = (item) => {
+window.iniciarFluxoConfirmacao = (idItem, valor) => {
     setTimeout(() => {
-        renderizarEtapaConfirmacao(item);
+        renderizarEtapaConfirmacao(idItem, valor);
     }, 500); // Delay p garantir q a aba ext abra antes
 };
 
-function renderizarEtapaConfirmacao(item) {
+function renderizarEtapaConfirmacao(idItem, valor) {
     const modal = document.getElementById('modal-detalhes-item');
     
     modal.innerHTML = `
@@ -491,7 +495,7 @@ function renderizarEtapaConfirmacao(item) {
             <p>Sua confirmação ajuda a manter nossa lista atualizada!</p>
             <div class="modal-acoes-fluxo">
                 <button class="btn-confirmar" onclick="confirmarCompraSucesso('${idItem}')">Sim, comprei!</button>
-                <button class="btn-cancelar" onclick="renderizarEtapaNegada('${item}')">Não...</button>
+                <button class="btn-cancelar" onclick="renderizarEtapaNegada('${idItem}', '${valor}')">Não...</button>
             </div>
         </div>
     `;
@@ -499,7 +503,7 @@ function renderizarEtapaConfirmacao(item) {
     if (window.lucide) window.lucide.createIcons();
 }
 
-window.renderizarEtapaNegada = (item) => {
+window.renderizarEtapaNegada = (idItem, valor) => {
     const modal = document.getElementById('modal-detalhes-item');
     
     modal.innerHTML = `
@@ -507,7 +511,7 @@ window.renderizarEtapaNegada = (item) => {
             <h3>Ocorreu algum problema?</h3>
             <div class="modal-acoes-fluxo">
                 <button class="btn-confirmar" onclick="Modal.fechar()">Só não comprei ainda</button>
-                <button class="btn-cancelar" onclick="renderizarEtapaMotivoFalha('${item}')">Não deu certo</button>
+                <button class="btn-cancelar" onclick="tratarLinkInvalido('${idItem}', '${valor}')">Link inválido</button>
             </div>
         </div>
     `;
@@ -515,15 +519,15 @@ window.renderizarEtapaNegada = (item) => {
     if (window.lucide) window.lucide.createIcons();
 }
 
-window.renderizarEtapaMotivoFalha = (item) => {
+window.renderizarEtapaMotivoFalha = (idItem, valor) => {
     const modal = document.getElementById('modal-detalhes-item');
     
     modal.innerHTML = `
         <div class="modal-fluxo-confirmacao">
             <h3>Mas por que não deu certo?</h3>
             <div class="modal-acoes-fluxo">
-                <button class="btn-falha" onclick="tratarLinkInvalido('${item}')">Link inválido</button>
-                <button class="btn-falha" onclick="renderizarEtapaPix('${item}')">Desisti</button>
+                <button class="btn-falha" onclick="tratarLinkInvalido('${idItem}', '${valor}')">Link inválido</button>
+                <button class="btn-falha" onclick="renderizarEtapaPix('${idItem}', '${valor}')">Desisti</button>
             </div>
         </div>
     `;
@@ -531,14 +535,24 @@ window.renderizarEtapaMotivoFalha = (item) => {
     if (window.lucide) window.lucide.createIcons();
 }
 
-window.renderizarEtapaPix = (item) => {
+window.renderizarEtapaPix = (idItem, valor) => {
+    
+    const valorFormatado = Number(valor).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    
     const modal = document.getElementById('modal-detalhes-item');
     
     modal.innerHTML = `
         <div class="modal-fluxo-confirmacao">
             <h3>Quer enviar um PIX com esse valor para o casal?</h3>
+            <p>Chave Pix do casal:</p>
+            <b><p>165.667.417-39</p></b>
+            <p>O valor do item reservado é de</p>
+            <p>R$ ${valorFormatado}</p>
             <div class="modal-acoes-fluxo">
-                <button class="btn-confirmar" onclick="iniciarFluxoCompraPix('${item}')">Sim</button>
+                <button class="btn-confirmar" onclick="confirmarCompraSucesso('${idItem}')">Fiz o PIX!</button>
                 <button class="btn-cancelar" onclick="Modal.fechar()">Não</button>
             </div>
         </div>
@@ -548,6 +562,7 @@ window.renderizarEtapaPix = (item) => {
 }
 
 window.confirmarReservaSucesso = async (idItem) => {
+    console.log(idItem)
     const btn = event.target;
     const textoOriginal = btn.innerText;
     btn.innerText = "Processando...";
@@ -568,7 +583,8 @@ window.confirmarReservaSucesso = async (idItem) => {
         }
         
         if (typeof carregarItens === 'function') carregarItens();
-        direcionarParaItem(idItem);
+        abrirModalDetalhes(idItem)
+        // direcionarParaItem(idItem);
         // Modal.fechar(); 
         
     } else {
@@ -617,23 +633,23 @@ window.confirmarCompraSucesso = async (idItem) => {
         if (window.exibirAviso) exibirAviso('Obrigadoo!!!', 'Sua contribuição foi registrada.');
         Modal.fechar(); 
         if (typeof carregarItens === 'function') carregarItens();
-        
+        abrirModalDetalhes(idItem)
     } else {
         navegar('login');
     }
 }
 
-window.tratarLinkInvalido = async (item) => {
+window.tratarLinkInvalido = async (idItem, valor) => {
     const { error } = await supabase
         .from('itens')
         .update({ 
             ranking: 9999
         })
-        .eq('id', item.id);
+        .eq('id', idItem);
 
     if (error) console.error("Erro ao atualizar link inválido:", error);
     
-    renderizarEtapaPix(item);
+    renderizarEtapaPix(idItem, valor);
 };
 
 // Inicia o fluxo de cancelamento da reserva
@@ -646,7 +662,7 @@ function iniciarFluxoCancelamento(idItem) {
             <p>Sabemos que imprevistos acontecem e está tudo bem.</p>
             <p>Mas caso tenha clicado por engano, tem como voltar!</p>
             <div class="modal-acoes-fluxo">
-                <button class="btn-confirmar" onclick="cancelaReserva('${idItem}')">Cancelar Reserva</button>
+                <button class="btn-confirmar" onclick="cancelaReserva('${idItem}')">Cancelar reserva</button>
                 <button class="btn-cancelar" onclick="Modal.fechar()">Voltar</button>
             </div>
         </div>
@@ -685,16 +701,21 @@ window.cancelaReserva = async (idItem) => {
 };
 
 // Inicia o fluxo de compra por pix
-function iniciarFluxoCompraPix(item) {
-    const modal = document.getElementById('modal-detalhes-item');
+function iniciarFluxoCompraPix(idItem, valor) {
+    const valorFormatado = Number(valor).toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
 
+    const modal = document.getElementById('modal-detalhes-item');
     modal.innerHTML = `
         <div class="modal-fluxo-confirmacao">
             <h3>Chave Pix do casal</h3>
             <b><p>165.667.417-39</p></b>
-            <p>O valor do item reservado é de R$'${item.valor}'</p>
+            <p>O valor do item reservado</p> 
+            <p>é de R$ ${valorFormatado}</p>
             <div class="modal-acoes-fluxo">
-                <button class="btn-confirmar" onclick="confirmarCompraSucesso('${item.id}')">Fiz o PIX!</button>
+                <button class="btn-confirmar" onclick="confirmarCompraSucesso('${idItem}')">Fiz o PIX!</button>
             </div>
         </div>
     `;

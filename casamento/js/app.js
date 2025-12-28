@@ -130,13 +130,16 @@ async function usuarioJaPresenteou() {
     if (!usuarioLogado) return false;
     if (isAdmin) return true;
     try {
-        const { data } = await window.withTimeout(
-            window.supabaseClient
-                .from('itens')
-                .select('id')
-                .eq('id_usuario', usuarioLogado.id)
-                .limit(1)
-        );
+        const { data, error } = await supabase
+            .from('itens')
+            .select('id')
+            .eq('id_usuario', usuarioLogado.id)
+            .limit(1)
+        if (error) {
+            console.error("Erro ao cancelar reserva:", error);
+            alert("Erro. Tente novamente.");
+            return;
+        }
         return data && data.length > 0;
     } catch (e) { return false; }
 }
@@ -156,6 +159,7 @@ window.navegar = async (pagina) => {
 
     if (pagina === 'carta') {
         const presenteou = await usuarioJaPresenteou();
+        console.log(presenteou)
         
         if (!presenteou && !isAdmin) {
             Modal.abrir({
