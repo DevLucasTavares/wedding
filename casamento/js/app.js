@@ -97,7 +97,6 @@ async function carregarPagina() {
             const mainApp = document.getElementById('main-app');
             if (mainApp) {
                 mainApp.innerHTML = htmlPagina; // Injeta o HTML na tela
-                console.log("Página carregada com sucesso: " + paginaAtual);
             }
         } catch (erro) {
             console.error("Erro ao carregar a página:", erro);
@@ -159,7 +158,6 @@ window.navegar = async (pagina) => {
 
     if (pagina === 'carta') {
         const presenteou = await usuarioJaPresenteou();
-        console.log(presenteou)
         
         if (!presenteou && !isAdmin) {
             Modal.abrir({

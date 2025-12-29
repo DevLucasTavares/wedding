@@ -46,7 +46,6 @@ window.alternarAba = (aba) => {
 };
 
 window.loginGoogle = async () => {
-    console.log("Iniciando Google Login...");
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -72,7 +71,8 @@ window.loginManual = async () => {
             emailPendente = email;
             document.getElementById('auth-main-content').style.display = 'none';
             document.getElementById('auth-status-screen').style.display = 'block';
-            document.getElementById('status-message').innerText = `Enviamos um link para ${email}.\nConfirme para liberar seu acesso!`;
+            // document.getElementById('status-message').innerText = `Enviamos um link para ${email}.\nConfirme para liberar seu acesso!`;
+            document.getElementById('status-message').innerHTML = `Enviamos um link para <b>${email}</b>.<br>Confirme para liberar seu acesso!`;
         } else {
             alert(traduzirErroAuth(error.message));
         }
@@ -112,7 +112,8 @@ window.registrarManual = async () => {
         emailPendente = email;
         document.getElementById('auth-main-content').style.display = 'none';
         document.getElementById('auth-status-screen').style.display = 'block';
-        document.getElementById('status-message').innerText = "Conta criada! Agora você <b>precisa</b> confirmar seu e-mail para entrar.";
+        // document.getElementById('status-message').innerText = "Conta criada! Agora você <b>precisa</b> confirmar seu e-mail para entrar.";
+        document.getElementById('status-message').innerHTML = "Conta criada!<br>Agora <b>confirme</b> seu e-mail para entrar.";
     }
 };
 

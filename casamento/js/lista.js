@@ -282,124 +282,57 @@ async function fazerUploadFotos(itemId) {
 
 
 window.adicionarItem = async () => {
-
-
-
     const elNome = document.getElementById('novo-item-nome');
-
     const elArea = document.getElementById('novo-item-area');
-
     const elDesc = document.getElementById('novo-item-descricao');
-
     const elValor = document.getElementById('novo-item-valor');
-
     const elLink = document.getElementById('novo-item-link');
 
     const nome = elNome.value.trim();
-
     const areaRaw = elArea.value;
-
     const desc = elDesc.value.trim();
-
     const valorRaw = elValor.value.trim();
-
     const link = elLink.value.trim();
-
-
-
-    if (!nome || !areaRaw || !desc || !valorRaw || !link) {
-
-        return exibirAviso('Atenção 💗', 'Preencha todos os campos corretamente.');
-
-    }
-
-
 
     const valorLimpo = valorRaw.replace(',', '.').replace(/[^\d.]/g, '');
 
     const valorFinal = parseFloat(valorLimpo);
-
     const areaFinal = parseInt(areaRaw);
 
-
-
-    if (isNaN(valorFinal) || isNaN(areaFinal)) {
-
-        return exibirAviso('Erro 💔', 'Verifique o valor e a área selecionada.');
-
-    }
-
-
-
     try {
-
-
-
         if (!supabase) throw new Error("Cliente Supabase não encontrado!");
 
-
-
         const { data: itemCriado, error: erroItem } = await supabase
-
             .from('itens')
-
             .insert([{ nome, area: areaFinal, descricao: desc, valor: valorFinal, link_compra: link }])
-
             .select().single();
-
-
 
         if (erroItem) throw erroItem;
 
-
-
         if (arquivosSelecionados.length > 0) {
-
             const urls = await fazerUploadFotos(itemCriado.id);
-
-
-
             if (urls.length > 0) {
-
                 const rowsFotos = urls.map(u => ({ item_id: itemCriado.id, url: u }));
 
                 await supabase
-
                     .from('fotos_itens')
-
                     .insert(rowsFotos);
-
             }
-
         }
-
-
-
         fecharTodosModais();
-
         carregarItens();
-
-
 
         [elNome, elArea, elDesc, elValor, elLink].forEach(el => el.value = '');
 
-
-
     } catch (err) {
 
-        exibirAviso('Erro 💔', 'Não foi possível salvar o presente.');
-
-
-
     }
-
 };
 
 
 
 window.removerItem = (id) => {
-    console.log("Chegou em removerItem")
-    exibirAviso('Remover item? 💔', 'Esta ação não pode ser desfeita.', true, async () => {
+    exibirAviso('', true, async () => {
         const { error } = await supabase
             .from('itens')
             .delete()
@@ -434,7 +367,7 @@ window.tentarEscolher = (id, nome) => {
 
 
 
-    exibirAviso('Reservar? 🎁', `Deseja escolher "${nome}"?`, true, async () => {
+    exibirAviso('', ``, true, async () => {
 
 
 
@@ -452,7 +385,7 @@ window.tentarEscolher = (id, nome) => {
 
             fecharTodosModais();
 
-            exibirAviso('Sucesso! 🤍', 'Item reservado com sucesso!');
+            exibirAviso('');
 
             carregarItens();
 
@@ -465,7 +398,6 @@ window.tentarEscolher = (id, nome) => {
 
 
 window.exibirAviso = (titulo, msg, temConfirm = false, callback = null) => {
-    console.log("Entrou em exibirAviso")
 
     const modalAviso = document.getElementById('modal-confirmacao');
     document.getElementById('confirma-titulo').innerText = titulo;

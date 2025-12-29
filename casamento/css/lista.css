@@ -79,12 +79,13 @@
 .grid-itens {
     margin: 0 10px;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 5px;
 }
 
 @media (min-width: 768px) { /* PC */
     .grid-itens {
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
         margin: 0 200px;
         gap: 20px;
     }
@@ -92,6 +93,7 @@
 
 .card {
     background: #FFFFFF;
+    /* background: red; */
     border-radius: 28px;
     padding: 16px;
     display: flex;
@@ -172,9 +174,12 @@
     flex: 1; 
     display: flex; 
     flex-direction: column; 
-    justify-content: space-between;
     align-self: stretch; 
     padding: 5px 0;
+}
+
+.card-price-info {
+    margin-top: auto;
 }
 
 .nome { 
@@ -191,9 +196,10 @@
     margin: 8px 0;
     line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 3; 
-    -webkit-box-orient: vertical;
+    /* -webkit-line-clamp: 3;  */
+    /* -webkit-box-orient: vertical; */
     overflow: hidden;
+    /* overflow:auto; */
 }
 
 .valor { 

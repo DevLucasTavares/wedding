@@ -103,6 +103,16 @@
     box-shadow: 0 0 0 3px var(--sombra);
 }
 
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none;
+}
+
 .input-group input.error {
     border-color: red !important;
     background-color: red;

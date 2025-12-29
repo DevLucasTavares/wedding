@@ -332,13 +332,11 @@ window.apagarItem = async (id) => {
             .delete()
             .eq('id', id);
 
-        exibirAviso('Sucesso!', 'Item ecluído com sucesso!');
         Modal.fechar();
         carregarItens();
 
         } catch (err) {
             console.error(err);
-            exibirAviso('Erro', 'Erro ao excluir o item.');
 
         } finally {
             estaProcessando = false;
@@ -414,13 +412,11 @@ window.salvarEdicao = async (id) => {
             .eq('id', id);
 
         if (error) throw error;
-        exibirAviso('Sucesso! ✨', 'Item atualizado com sucesso!');
         Modal.fechar();
         carregarItens();
 
     } catch (err) {
         console.error(err);
-        exibirAviso('Erro 💔', 'Erro ao salvar as alterações.');
 
     } finally {
         estaProcessando = false;
@@ -510,7 +506,7 @@ window.renderizarEtapaNegada = (idItem, valor) => {
         <div class="modal-fluxo-confirmacao">
             <h3>Ocorreu algum problema?</h3>
             <div class="modal-acoes-fluxo">
-                <button class="btn-confirmar" onclick="Modal.fechar()">Só não comprei ainda</button>
+                <button class="btn-confirmar" onclick="Modal.fechar()">Não comprei</button>
                 <button class="btn-cancelar" onclick="tratarLinkInvalido('${idItem}', '${valor}')">Link inválido</button>
             </div>
         </div>
@@ -562,7 +558,6 @@ window.renderizarEtapaPix = (idItem, valor) => {
 }
 
 window.confirmarReservaSucesso = async (idItem) => {
-    console.log(idItem)
     const btn = event.target;
     const textoOriginal = btn.innerText;
     btn.innerText = "Processando...";
@@ -630,7 +625,6 @@ window.confirmarCompraSucesso = async (idItem) => {
             return;
         }
         
-        if (window.exibirAviso) exibirAviso('Obrigadoo!!!', 'Sua contribuição foi registrada.');
         Modal.fechar(); 
         if (typeof carregarItens === 'function') carregarItens();
         abrirModalDetalhes(idItem)
