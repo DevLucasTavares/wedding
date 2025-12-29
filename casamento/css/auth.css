@@ -6,6 +6,7 @@
     width: 100%;
     padding: 16px;
     box-sizing: border-box;
+    padding-top: 90px;
 }
 
 .auth-card {
@@ -165,4 +166,32 @@
 
 .btn-google img {
     width: 18px;
+}
+
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    color: var(--secundaria);
+    opacity: 0.7;
+}
+.toggle-password:hover {
+    opacity: 1;
+}
+
+.password-wrapper input {
+    padding-right: 40px !important;
+}
+
+#btn-resend:disabled {
+    background-color: #ccc;
+    border-color: #999;
 }

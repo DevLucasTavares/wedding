@@ -1,3 +1,31 @@
+let countdownAtivo = false;
+let emailPendente = "";
+
+window.toggleSenha = (idInput, idIcone) => {
+    const input = document.getElementById(idInput);
+    const icone = document.getElementById(idIcone);
+    
+    if (!input || !icone) return;
+    
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    const iconName = isPassword ? 'eye-off' : 'eye';
+    icone.setAttribute('data-lucide', iconName);
+    lucide.createIcons();
+};
+
+window.voltarAoLogin = () => {
+    document.getElementById('auth-main-content').style.display = 'block';
+    document.getElementById('auth-status-screen').style.display = 'none';
+};
+
+const traduzirErroAuth = (msg) => {
+    if (msg.includes("Invalid login credentials")) return "E-mail ou senha incorretos, verifique os dados.";
+    if (msg.includes("User already registered")) return "Você já tem conta! Tenta fazer login.";
+    if (msg.includes("rate limit")) return "Calma! Você tentou muitas vezes. Espera um pouco.";
+    return `Erro: ${msg}`;
+};
+
 window.alternarAba = (aba) => {
     const loginForm = document.getElementById('form-login');
     const registroForm = document.getElementById('form-registro');
@@ -32,20 +60,23 @@ window.loginManual = async () => {
     const email = document.getElementById('login-email').value;
     const senha = document.getElementById('login-senha').value;
 
-    if (!email || !senha) {
-        alert("Preencha e-mail e senha!");
-        return;
-    }
+    if (!email || !senha) return alert("Preencha e-mail e senha!");
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
         email: email,
         password: senha
     });
 
     if (error) {
-        alert("Erro no login: " + error.message);
+        if (error.message.includes("Email not confirmed")) {
+            emailPendente = email;
+            document.getElementById('auth-main-content').style.display = 'none';
+            document.getElementById('auth-status-screen').style.display = 'block';
+            document.getElementById('status-message').innerText = `Enviamos um link para ${email}.\nConfirme para liberar seu acesso!`;
+        } else {
+            alert(traduzirErroAuth(error.message));
+        }
     } else {
-        console.log("Login realizado!");
         if (window.navegar) window.navegar('home');
     }
 };
@@ -55,13 +86,16 @@ window.registrarManual = async () => {
     const email = document.getElementById('reg-email').value;
     const telefone = document.getElementById('reg-telefone').value;
     const senha = document.getElementById('reg-senha').value;
+    const senhaConf = document.getElementById('reg-senha-confirm').value;
 
-    if (!nome || !email || !senha) {
-        alert("Nome, E-mail e Senha são obrigatórios!");
-        return;
-    }
+    const regexSenha = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
 
-    const { data, error } = await supabase.auth.signUp({
+    if (senha !== senhaConf) return alert("As senhas não batem!");
+    if (!regexSenha.test(senha)) return alert("Senha fraca: use pelo menos 6 caracteres, uma letra MAIÚSCULA e um número.");
+
+    if (!nome || !email) return alert("Preencha os campos obrigatórios!");
+
+    const { error } = await supabase.auth.signUp({
         email: email,
         password: senha,
         options: {
@@ -73,12 +107,48 @@ window.registrarManual = async () => {
     });
 
     if (error) {
-        alert("Erro ao registrar: " + error.message);
+        alert(traduzirErroAuth(error.message));
     } else {
-        alert("Cadastro realizado! Verifique seu e-mail.");
-        alternarAba('login');
+        emailPendente = email;
+        document.getElementById('auth-main-content').style.display = 'none';
+        document.getElementById('auth-status-screen').style.display = 'block';
+        document.getElementById('status-message').innerText = "Conta criada! Agora você <b>precisa</b> confirmar seu e-mail para entrar.";
     }
 };
+
+window.reenviarEmail = async () => {
+    if (countdownAtivo) return;
+
+    const btn = document.getElementById('btn-resend');
+    const { error } = await supabase.auth.resend({ type: 'signup', email: emailPendente });
+
+    if (error) {
+        alert(traduzirErroAuth(error.message));
+    } else {
+        iniciarCooldown(btn);
+    }
+};
+
+function iniciarCooldown(btn) {
+    let tempo = 60;
+    countdownAtivo = true;
+    btn.disabled = true;
+    btn.style.opacity = "0.5";
+    btn.style.cursor = "not-allowed";
+
+    const timer = setInterval(() => {
+        tempo--;
+        btn.innerText = `Reenviar em ${tempo}s`;
+        if (tempo <= 0) {
+            clearInterval(timer);
+            btn.innerText = "Reenviar E-mail";
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
+            countdownAtivo = false;
+        }
+    }, 1000);
+}
 
 window.deslogar = async () => {
     const { error } = await supabase.auth.signOut();
