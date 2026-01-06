@@ -1,62 +1,18 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>L&L 25-01-2026</title>
+    <title>Redirecionando...</title>
+    <script type="text/javascript">
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        
+        const destination = isLocal 
+            ? window.location.origin + "/cha-de-panela/" 
+            : "https://lucascarrarini.com/cha-de-panela/";
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23546E7A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.78-8.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'></path></svg>">
-
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/home.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/lista.css">
-
-    <link rel="stylesheet" href="css/animations.css"> 
-    <link rel="stylesheet" href="css/card.css">       
-    <link rel="stylesheet" href="css/auth.css">       
-    <link rel="stylesheet" href="css/modal.css">
-    <link rel="stylesheet" href="css/itemModal.css">
-    <link rel="stylesheet" href="css/carta.css">
-    <link rel="stylesheet" href="css/contato.css">
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script src="js/supabaseClient.js"></script>
-    <script src="js/itemModal.js"></script> 
-    <script src="js/auth.js"></script>
-    <script src="js/header.js"></script>
-    <script src="js/lista.js"></script>
-    <script src="js/modais.js"></script>
-
-    <script src="js/app.js" defer></script>
-</head>
-<body> 
-    <div id="header-app"></div>
-
-    <main id="main-app"></main>
-
-    <div class="overlay" id="modal-overlay" onclick="Modal.fechar()" style="display: none;"></div>
-
-    <div id="modal-detalhes-item" class="mdi-container" style="display: none;"></div>
-
-
-    <div id="modal-confirmacao" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h2 id="confirma-titulo"></h2>
-            <p id="confirma-mensagem"></p>
-            <div class="modal-footer">
-                <button id="confirma-btn-ok" class="btn-confirmar">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        setInterval(() => { 
-            if(window.lucide) lucide.createIcons(); 
-        }, 1000);
+        window.location.href = destination;
     </script>
+</head>
+<body>
+    <p>Redirecionando...</p>
 </body>
 </html>
