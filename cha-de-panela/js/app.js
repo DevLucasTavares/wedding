@@ -170,7 +170,82 @@ window.navegar = async (pagina) => {
         }
     }
 
+    if (pagina === 'contato') {
+        if (!usuarioLogado && !isAdmin) {
+            Modal.abrir({
+                titulo: "Acesso Restrito",
+                mensagem: "Para visualizar o endereço e dados de contribuição, por favor, faça login na sua conta.",
+                textoBotao: "Fazer Login",
+                callback: () => realizarNavegacao('login')
+            });
+            return;
+        }
+
+        const conteudoContato = `
+            <div class="contato-container">
+                <div class="contato-secao">
+                    <div class="secao-header">
+                        <i data-lucide="map-pin"></i>
+                        <div class="secao-titulo">
+                            <h4>Endereço de Entrega</h4>
+                        </div>
+                    </div>
+                    <p class="endereco-texto">
+                        Estrada do Tindiba, 979<br>
+                        Bloco 4, Apto 407<br>
+                        22740-361
+                    </p>
+                </div>
+                
+                <div class="contato-secao">
+                    <div class="secao-header">
+                        <i data-lucide="qr-code"></i>
+                        <div class="secao-titulo">
+                            <h4>Chave Pix</h4>
+                        </div>
+                    </div>
+                    <div class="pix-group">
+                        <input type="text" value="16566741739" id="chavePix" readonly>
+                        <button onclick="copiarPix()" title="Copiar chave">
+                            <i data-lucide="clipboard"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        Modal.abrir({
+            titulo: "Informações de Contato",
+            mensagem: conteudoContato,
+            textoBotao: "Fechar",
+            callback: () => Modal.fechar()
+        });
+        return;
+    }
+
     realizarNavegacao(pagina);
+};
+
+window.copiarPix = () => {
+    const inputChave = document.getElementById('chavePix');
+    const valor = inputChave.value;
+
+    navigator.clipboard.writeText(valor).then(() => {
+        const btn = document.querySelector('.pix-group button');
+        
+        // Troca para ícone de check
+        btn.innerHTML = '<i data-lucide="check"></i>';
+        lucide.createIcons(); // Re-renderiza o novo ícone
+        
+        btn.style.background = "#28a745"; // Verde sucesso opcional
+
+        setTimeout(() => {
+            // Volta para a prancheta
+            btn.innerHTML = '<i data-lucide="clipboard"></i>';
+            btn.style.background = ""; 
+            lucide.createIcons();
+        }, 2000);
+    });
 };
 
 function realizarNavegacao(pagina) {
