@@ -283,7 +283,12 @@ function renderizarConteudoModal() {
                             </button>
                         </div>`
                         : ''
-                        }`
+                        }
+                        <div class="reservar">
+                            <button class="mdi-botao-acao" onclick="navegar('contato')">
+                                Endereço
+                            </button>
+                        </div>`
                     )
                 }
                 ${item.id_usuario && (isAdmin || (!item.comprado_em && (item.id_usuario == usuarioLogado.id))) ?
